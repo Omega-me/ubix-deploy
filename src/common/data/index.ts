@@ -1,0 +1,15 @@
+export * from './mainMenuData';
+export { default as blogsData } from './blogs';
+export { default as candidateResumeData } from './candidateResume';
+export { default as candidatesData } from './candidates';
+export { default as candidatesMenuData } from './candidatesMenuData';
+export { default as employerMenuData } from './employerMenuData';
+export { default as footerContentData } from './footerContent';
+export { default as galleryData } from './gallery';
+export { default as jobCatergoriesData } from './job-catergories';
+export { default as jobFeaturedData } from './job-featured';
+export { default as mobileMenuData } from './mobileMenuData';
+export { default as shopItemsData } from './shopItems';
+export { default as socialsData } from './socials';
+export { default as testimonialData } from './testimonial';
+export { default as topCompanyData } from './topCompany';
