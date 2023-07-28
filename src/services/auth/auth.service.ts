@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt_decode from 'jwt-decode';
 import { auth } from 'common/configs';
 import { eApiRoutes, eHttpMethod } from 'common/enums';
@@ -51,18 +52,26 @@ export const getUserDataService = async (user: User) => {
       },
     });
     const data: AuthData<UserDataDto> = {
-      user: res,
+      user: {
+        profile: true,
+        ...res,
+      },
       token,
       emailVerified: decoded.email_verified,
     };
     return data;
-  } catch (error) {
-    const data: AuthData<UserDataDto> = {
-      user: null,
-      token,
-      emailVerified: decoded.email_verified,
-    };
-    return data;
+  } catch (error: any) {
+    if (error && error.response && error.response.status === 404) {
+      const data: AuthData<{ profile: boolean }> = {
+        user: {
+          profile: false,
+        },
+        token,
+        emailVerified: decoded.email_verified,
+      };
+      return data;
+    }
+    return null;
   }
 };
 
@@ -124,9 +133,15 @@ export const createUserWithEmailAndPasswordService = async (data: SignupUserDto)
 export const updateEmailService = async (data: { user: User; newEmail: string }) => {
   try {
     await updateEmail(data.user, data.newEmail);
-    return YOUR_EMAIL_WAS_CHANGED_SUCCESSFULLY;
+    return {
+      succes: true,
+      message: YOUR_EMAIL_WAS_CHANGED_SUCCESSFULLY,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_UPDATING_YOUR_EMAIL;
+    return {
+      succes: false,
+      message: THERE_WAS_A_PROBLEM_UPDATING_YOUR_EMAIL,
+    };
   }
 };
 
@@ -138,9 +153,15 @@ export const updateEmailService = async (data: { user: User; newEmail: string })
 export const updatePasswordService = async (data: { user: User; newPassword: string }) => {
   try {
     await updatePassword(data.user, data.newPassword);
-    return YOUR_PASSSWORD_WAS_CHANGED_SUCCESSFULLY;
+    return {
+      succes: true,
+      message: YOUR_PASSSWORD_WAS_CHANGED_SUCCESSFULLY,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_UPDATING_YOUR_PASSWORD;
+    return {
+      succes: false,
+      message: THERE_WAS_A_PROBLEM_UPDATING_YOUR_PASSWORD,
+    };
   }
 };
 
@@ -152,9 +173,15 @@ export const updatePasswordService = async (data: { user: User; newPassword: str
 export const sendPasswordResetEmailService = async (data: { email: string; actionCodeSettings?: ActionCodeSettings | undefined }) => {
   try {
     await sendPasswordResetEmail(auth, data.email, data.actionCodeSettings);
-    return A_PASSWORD_RESET_LINK_WAS_SEND_TO_YOUR_EMAIL_ADDRESS;
+    return {
+      succes: true,
+      message: A_PASSWORD_RESET_LINK_WAS_SEND_TO_YOUR_EMAIL_ADDRESS,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_SENDING_PASSWORD_RESET_EMAIL;
+    return {
+      succes: false,
+      message: THERE_WAS_A_PROBLEM_SENDING_PASSWORD_RESET_EMAIL,
+    };
   }
 };
 
@@ -166,9 +193,15 @@ export const sendPasswordResetEmailService = async (data: { email: string; actio
 export const sendEmailVerificationService = async (data: { user: User; actionCodeSettings?: ActionCodeSettings | null | undefined }) => {
   try {
     await sendEmailVerification(data.user, data.actionCodeSettings);
-    return AN_EMAIL_VERIFICATION_LINK_WAS_SENT_TO_YOUR_EMAIL_ACCOUNT;
+    return {
+      succes: true,
+      message: AN_EMAIL_VERIFICATION_LINK_WAS_SENT_TO_YOUR_EMAIL_ACCOUNT,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_SENDING_EMAIL_VERFICATION;
+    return {
+      succes: false,
+      message: THERE_WAS_A_PROBLEM_SENDING_EMAIL_VERFICATION,
+    };
   }
 };
 
@@ -179,9 +212,15 @@ export const sendEmailVerificationService = async (data: { user: User; actionCod
 export const signOutService = async () => {
   try {
     await signOut(auth);
-    return USER_HAS_BEEN_SUCCESSFULLY_LOGGED_OUT;
+    return {
+      succes: true,
+      message: USER_HAS_BEEN_SUCCESSFULLY_LOGGED_OUT,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_LOGGING_THE_USER_OUT;
+    return {
+      succes: false,
+      message: THERE_WAS_A_PROBLEM_LOGGING_THE_USER_OUT,
+    };
   }
 };
 

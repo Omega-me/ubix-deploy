@@ -26,7 +26,7 @@ const authSlice = createSlice({
     resetAuthMessageState: state => {
       new AuthReducer({ state }).resetMessage();
     },
-    initializeUserState: (state, { payload }: PayloadAction<AuthData<UserDataDto>>) => {
+    initializeUserState: (state, { payload }: PayloadAction<AuthData<UserDataDto | { profile: boolean }>>) => {
       new AuthReducer({ state }).initializeUser(payload);
     },
     setPhoneConfirmationState: (state, { payload }: PayloadAction<ConfirmationResult>) => {

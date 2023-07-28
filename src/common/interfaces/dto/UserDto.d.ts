@@ -2,23 +2,24 @@
 import { eUserType } from 'common/enums';
 
 export interface UserDataDto {
-  userId?: string,
-  fullName: string,
-  email: string,
-  phoneNumber: string,
-  birthday: string,
-  gender: string,
-  type: string,
-  role: string,
-  postCode: string,
-  address: string,
-  country: string,
-  location: number[],
-  about: stirng,
-  tags: string,
-  socials: string[],
-  openToWork: boolean,
-  createdAt: string,
+  profile?: boolean;
+  userId?: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  birthday: string;
+  gender: string;
+  type: string;
+  role: string;
+  postCode: string;
+  address: string;
+  country: string;
+  location: number[];
+  about: stirng;
+  tags: string;
+  socials: string[];
+  openToWork: boolean;
+  createdAt: string;
   updatedAt: string;
 }
 

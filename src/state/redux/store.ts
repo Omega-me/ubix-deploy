@@ -3,14 +3,23 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import rootReducer from './reducers/root.reducer';
 import { auth } from 'common/configs';
 import { initializeUserState } from './store/auth.store';
-import { getUserDataService } from 'services';
+import { getUserDataService, signOutService } from 'services';
+import { AuthData, UserDataDto } from 'common/interfaces';
+import { toast } from 'react-toastify';
+import { THERE_WAS_A_PROBLEM_LOGGING_IN } from 'common/labels';
 
 export const store = configureStore({ reducer: rootReducer });
 
 // initialise user auth state
 auth.onAuthStateChanged(async user => {
   if (user) {
-    store.dispatch(initializeUserState(await getUserDataService(user)));
+    const userData: AuthData<UserDataDto> | null = await getUserDataService(user);
+    if (userData) {
+      store.dispatch(initializeUserState(userData));
+    } else {
+      await signOutService();
+      toast.error(THERE_WAS_A_PROBLEM_LOGGING_IN);
+    }
   }
 });
 

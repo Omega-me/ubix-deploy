@@ -1,112 +1,66 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { Link, NavigateOptions, To, useNavigate } from 'react-router-dom';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { TabPanel, Tabs } from 'react-tabs';
-import { AuthDataDto, LoginUserDto } from 'common/interfaces';
-import { AlertMessage, CostumText, Loading } from 'components';
+import { CostumText, Loading } from 'components';
 import { eTextType } from 'common/enums';
 import splashScreen from 'assets/images/background/SplashScreen.svg';
-import { User, ActionCodeSettings } from 'firebase/auth';
+import { FieldErrors, UseFormClearErrors, UseFormRegister, UseFormReset } from 'react-hook-form';
+import { LoginUserDto } from 'common/interfaces';
 
 interface AuthProps {
-  useAuth: {
-    signin: (config: { data: LoginUserDto; navigateUrl?: To | undefined; navigateOptions?: NavigateOptions | undefined }) => void;
-    signup: (config: { data: LoginUserDto; navigateUrl?: To | undefined; navigateOptions?: NavigateOptions | undefined }) => void;
-    isSuccess: boolean;
-    isError: boolean;
-    isLoading: boolean;
-    message: string;
-    resetAuthState: () => void;
-    data: AuthDataDto;
-    sendPasswordResetEmail: (config: { email: string; actionCodeSettings?: ActionCodeSettings | undefined }) => Promise<void>;
-    signinWithGoogle: (config: { navigateUrl?: To | undefined; navigateOptions?: NavigateOptions | undefined }) => void;
+  isLoading: boolean;
+  pathName: string;
+  signup: {
+    registerSignUp: UseFormRegister<LoginUserDto>;
+    signUpErrors: FieldErrors<LoginUserDto>;
+    onSignUp: (e?: React.BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>;
+    resetSignup: UseFormReset<LoginUserDto>;
+    clearSignupErrors: UseFormClearErrors<LoginUserDto>;
+  };
+  login: {
+    registerLogIn: UseFormRegister<LoginUserDto>;
+    logInErrors: FieldErrors<LoginUserDto>;
+    onLogin: (e?: React.BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>;
+    resetLogin: UseFormReset<LoginUserDto>;
+    clearLoginErrors: UseFormClearErrors<LoginUserDto>;
+    onLoginWithGoogle: () => void;
+  };
+  forgotpassword: {
+    registerForgotPassword: UseFormRegister<{
+      email: string;
+    }>;
+    forgotPasswordErrors: FieldErrors<{
+      email: string;
+    }>;
+    onForgotPassword: (e?: React.BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>;
+    resetForgotPassword: UseFormReset<{
+      email: string;
+    }>;
+    clearForgotPasswordErrors: UseFormClearErrors<{
+      email: string;
+    }>;
   };
 }
 
-const Auth: React.FC<AuthProps> = (props) => {
-  const { useAuth } = props;
-  const pathName = location.pathname.split('/')[1].toLowerCase();
-  const navigate = useNavigate();
-
-  const [logInError, setLoginError] = useState(false);
-  const [signupError, setSignupError] = useState(false);
-  const [forgotPasswordError, setForgotPasswordError] = useState(false);
-  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
+const Auth: React.FC<AuthProps> = props => {
+  const { login, signup, forgotpassword, isLoading, pathName } = props;
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register: registerSignUp,
-    handleSubmit: handleSignUp,
-    reset: resetSignup,
-    formState: { errors: signUpErrors },
-    clearErrors: clearSignupErrors,
-  } = useForm<LoginUserDto>();
-
-  const {
-    register: registerLogIn,
-    handleSubmit: handleLogIn,
-    reset: resetLogin,
-    formState: { errors: logInErrors },
-    clearErrors: clearLoginErrors,
-  } = useForm<LoginUserDto>();
-
-  const {
-    register: registerForgotPassword,
-    handleSubmit: handleForgotPassword,
-    reset: resetForgotPassword,
-    formState: { errors: forgotPasswordErrors },
-    clearErrors: clearForgotPasswordErrors,
-  } = useForm<{ email: string }>();
-
-  const onSignUp: SubmitHandler<LoginUserDto> = (signUpData) => {
-    useAuth.signup({ data: signUpData });
-    if (useAuth?.isSuccess) {
-      resetLogin();
-      clearSignupErrors();
-    }
-    if (useAuth?.isError) {
-      setSignupError(true);
-    }
-  };
-  const onSignIn: SubmitHandler<LoginUserDto> = (signInData) => {
-    useAuth.signin({ data: signInData });
-    if (useAuth?.isSuccess) {
-      resetLogin();
-      clearLoginErrors();
-    }
-    if (useAuth?.isError) {
-      setLoginError(true);
-    }
-    if (useAuth?.data?.user) {
-      navigate('/');
-    }
-  };
-
-  const onForgotPassword: SubmitHandler<{ email: string }> = (email) => {
-    useAuth?.sendPasswordResetEmail(email);
-    resetForgotPassword();
-    if (useAuth?.isError) {
-      setForgotPasswordError(true);
-      setForgotPasswordSuccess(false);
-    }
-    if (useAuth?.isSuccess) {
-      setForgotPasswordError(false);
-      setForgotPasswordSuccess(true);
-    }
-  };
   return (
     <div className="login-section">
       <div className="image-layer" style={{ backgroundImage: `url(${splashScreen})` }}></div>
       <div className="outer-box">
         <div className="login-form default-form">
+          {/* Login  */}
           {pathName === 'login' && (
             <div className="form-inner">
               <h3>Login to Ubix</h3>
-              <form>
+              <form onSubmit={login.onLogin}>
                 <div className="form-group">
-                  <label>Email</label>
+                  <label htmlFor="emailId">Email</label>
                   <input
-                    {...registerLogIn('email', {
+                    {...login.registerLogIn('email', {
                       required: 'Please enter your email!',
                       pattern: {
                         message: 'Please enter a valid email!',
@@ -115,63 +69,50 @@ const Auth: React.FC<AuthProps> = (props) => {
                       },
                     })}
                     type="email"
+                    id="emailId"
                     placeholder="Email"
-                    className={`${logInErrors?.email?.message && 'is-invalid'}`}
+                    className={`${login.logInErrors?.email?.message && 'is-invalid'}`}
                   />
-                  <CostumText type={eTextType.ERROR} text={logInErrors?.email?.message} />
+                  <CostumText type={eTextType.ERROR} text={login.logInErrors?.email?.message} />
                 </div>
-                <label style={{ fontSize: 15, fontWeight: 500, marginBottom: 10 }}>Password</label>
-                <div
-                  className="form-group"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: '#F0F5F7',
-                    borderRadius: 8,
-                  }}
-                >
-                  <input
-                    {...registerLogIn('password', { required: 'Please enter your password!' })}
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Password"
-                    className={`${logInErrors?.password?.message && 'is-invalid'}`}
-                  />
-                  <i
-                    onClick={() => setShowPassword(!showPassword)}
-                    className={`${showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}`}
-                    style={{ cursor: 'pointer', marginLeft: 5, marginRight: 5 }}
-                  ></i>
+
+                <label htmlFor="passwordId">Password</label>
+                <div className="form-group">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      backgroundColor: '#F0F5F7',
+                      borderRadius: 8,
+                    }}>
+                    <input
+                      {...login.registerLogIn('password', { required: 'Please enter your password!' })}
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Password"
+                      className={`${login.logInErrors?.password?.message && 'is-invalid'}`}
+                      id="passwordId"
+                    />
+                    <i
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={`${showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}`}
+                      style={{ cursor: 'pointer', marginLeft: 5, marginRight: 15 }}></i>
+                  </div>
+                  <CostumText type={eTextType.ERROR} text={login.logInErrors?.password?.message} />
                 </div>
-                <CostumText type={eTextType.ERROR} text={logInErrors?.password?.message} />
                 <div className="form-group">
                   <div className="field-outer">
-                    <div className="input-group checkboxes square">
-                      <input type="checkbox" name="remember-me" id="remember" />
-                      <label htmlFor="remember" className="remember">
-                        <span className="custom-checkbox"></span> Remember me
-                      </label>
-                    </div>
+                    <div className="input-group checkboxes square"></div>
                     <Link to="/forgotpassword" className="pwd">
                       Forgot password?
                     </Link>
                   </div>
                 </div>
                 <div className="form-group">
-                  <button className="theme-btn btn-style-one" type="submit" onClick={handleLogIn(onSignIn)}>
-                    {useAuth.isLoading ? <Loading button={true} size="sm" /> : 'Log in'}
+                  <button className="theme-btn btn-style-one" type="submit" onClick={login.onLogin}>
+                    {isLoading ? <Loading button={true} size="sm" /> : 'Log in'}
                   </button>
                 </div>
-                {useAuth.isError && (
-                  <AlertMessage
-                    dismissible={true}
-                    showLineBreak={false}
-                    message={useAuth?.message}
-                    type="danger"
-                    showAlert={logInError}
-                    onClose={() => setLoginError(false)}
-                  />
-                )}
               </form>
 
               <div className="bottom-box">
@@ -181,12 +122,10 @@ const Auth: React.FC<AuthProps> = (props) => {
                     to="/signup"
                     className="call-modal signup"
                     onClick={() => {
-                      useAuth.resetAuthState();
                       setShowPassword(false);
-                      resetLogin();
-                      clearLoginErrors();
-                    }}
-                  >
+                      login.resetLogin();
+                      login.clearLoginErrors();
+                    }}>
                     Signup
                   </Link>
                 </div>
@@ -197,19 +136,17 @@ const Auth: React.FC<AuthProps> = (props) => {
                       to="/"
                       className="call-modal signup"
                       onClick={() => {
-                        useAuth.resetAuthState();
                         setShowPassword(false);
-                        resetLogin();
-                        clearLoginErrors();
-                      }}
-                    >
+                        login.resetLogin();
+                        login.clearLoginErrors();
+                      }}>
                       Continue as guest
                     </Link>
                   </div>
                 </div>
                 <div className="btn-box row">
                   <div className="col-lg-12 col-md-12">
-                    <a href="#" className="theme-btn social-btn-two google-btn" onClick={() => useAuth?.signinWithGoogle({ navigateUrl: '/' })}>
+                    <a href="#" className="theme-btn social-btn-two google-btn" onClick={() => login.onLoginWithGoogle()}>
                       <i className="fab fa-google"></i> Log In via Gmail
                     </a>
                   </div>
@@ -217,16 +154,17 @@ const Auth: React.FC<AuthProps> = (props) => {
               </div>
             </div>
           )}
+          {/* Signup */}
           {pathName === 'signup' && (
             <div className="form-inner">
-              <h3>Create an Ubix Account</h3>
+              <h3>Create an Ubix account</h3>
               <Tabs>
                 <TabPanel>
                   <form action="add-parcel.html">
                     <div className="form-group">
-                      <label>Email Address</label>
+                      <label htmlFor="emailId">Email</label>
                       <input
-                        {...registerSignUp('email', {
+                        {...signup.registerSignUp('email', {
                           required: 'Please enter your email!',
                           pattern: {
                             message: 'Please enter a valid email',
@@ -235,45 +173,34 @@ const Auth: React.FC<AuthProps> = (props) => {
                           },
                         })}
                         type="email"
+                        id="emailId"
                         placeholder="Email"
-                        className={`${signUpErrors?.email?.message && 'is-invalid'}`}
+                        className={`${signup.signUpErrors?.email?.message && 'is-invalid'}`}
                       />
-                      <CostumText type={eTextType.ERROR} text={signUpErrors?.email?.message} />
+                      <CostumText type={eTextType.ERROR} text={signup.signUpErrors?.email?.message} />
                     </div>
-                    <label style={{ fontSize: 15, fontWeight: 500, marginBottom: 10 }}>Password</label>
-                    <div
-                      className="form-group"
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#F0F5F7', borderRadius: 8 }}
-                    >
-                      <input
-                        {...registerSignUp('password', { required: 'Please enter your password!' })}
-                        id="password-field"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Password"
-                        className={`${signUpErrors?.password?.message && 'is-invalid'}`}
-                      />
-                      <i
-                        onClick={() => setShowPassword(!showPassword)}
-                        className={`${showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}`}
-                        style={{ cursor: 'pointer', marginLeft: 5, marginRight: 5 }}
-                      ></i>
-                    </div>
-                    <CostumText type={eTextType.ERROR} text={signUpErrors?.password?.message} />
                     <div className="form-group">
-                      <button className="theme-btn btn-style-one" type="submit" onClick={handleSignUp(onSignUp)}>
-                        {useAuth.isLoading ? <Loading button={true} size="sm" /> : 'Register'}
+                      <label htmlFor="passwordId">Password</label>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#F0F5F7', borderRadius: 8 }}>
+                        <input
+                          {...signup.registerSignUp('password', { required: 'Please enter your password!' })}
+                          id="passwordId"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Password"
+                          className={`${signup.signUpErrors?.password?.message && 'is-invalid'}`}
+                        />
+                        <i
+                          onClick={() => setShowPassword(!showPassword)}
+                          className={`${showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}`}
+                          style={{ cursor: 'pointer', marginLeft: 5, marginRight: 15 }}></i>
+                      </div>
+                      <CostumText type={eTextType.ERROR} text={signup.signUpErrors?.password?.message} />
+                    </div>
+                    <div className="form-group">
+                      <button className="theme-btn btn-style-one" type="submit" onClick={signup.onSignUp}>
+                        {isLoading ? <Loading button={true} size="sm" /> : 'Register'}
                       </button>
                     </div>
-                    {useAuth.isError && (
-                      <AlertMessage
-                        dismissible={true}
-                        showLineBreak={false}
-                        message={useAuth?.message}
-                        type="danger"
-                        showAlert={signupError}
-                        onClose={() => setSignupError(false)}
-                      />
-                    )}
                   </form>
                 </TabPanel>
               </Tabs>
@@ -284,12 +211,10 @@ const Auth: React.FC<AuthProps> = (props) => {
                     to="/login"
                     className="call-modal login"
                     onClick={() => {
-                      useAuth.resetAuthState();
                       setShowPassword(false);
-                      resetSignup();
-                      clearSignupErrors();
-                    }}
-                  >
+                      signup.resetSignup();
+                      signup.clearSignupErrors();
+                    }}>
                     LogIn
                   </Link>
                 </div>
@@ -300,19 +225,17 @@ const Auth: React.FC<AuthProps> = (props) => {
                       to="/"
                       className="call-modal signup"
                       onClick={() => {
-                        useAuth.resetAuthState();
                         setShowPassword(false);
-                        resetLogin();
-                        clearSignupErrors();
-                      }}
-                    >
+                        login.resetLogin();
+                        signup.clearSignupErrors();
+                      }}>
                       Continue as guest
                     </Link>
                   </div>
                 </div>
                 <div className="btn-box row">
                   <div className="col-lg-12 col-md-12">
-                    <a href="#" className="theme-btn social-btn-two google-btn" onClick={() => useAuth?.signinWithGoogle({ navigateUrl: '/' })}>
+                    <a href="#" className="theme-btn social-btn-two google-btn" onClick={() => login.onLoginWithGoogle()}>
                       <i className="fab fa-google"></i> Log In via Gmail
                     </a>
                   </div>
@@ -320,6 +243,7 @@ const Auth: React.FC<AuthProps> = (props) => {
               </div>
             </div>
           )}
+          {/* Forgot password */}
           {pathName === 'forgotpassword' && (
             <div className="form-inner">
               <h3>Change your password</h3>
@@ -327,9 +251,9 @@ const Auth: React.FC<AuthProps> = (props) => {
                 <TabPanel>
                   <form action="add-parcel.html">
                     <div className="form-group">
-                      <label>Email Address</label>
+                      <label htmlFor="emailId">Email</label>
                       <input
-                        {...registerForgotPassword('email', {
+                        {...forgotpassword.registerForgotPassword('email', {
                           required: 'Please enter your email!',
                           pattern: {
                             message: 'Please enter a valid email',
@@ -337,38 +261,18 @@ const Auth: React.FC<AuthProps> = (props) => {
                               /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                           },
                         })}
+                        id="emailId"
                         type="email"
                         placeholder="Email"
-                        className={`${forgotPasswordErrors?.email?.message && 'is-invalid'}`}
+                        className={`${forgotpassword.forgotPasswordErrors?.email?.message && 'is-invalid'}`}
                       />
-                      <CostumText type={eTextType.ERROR} text={forgotPasswordErrors?.email?.message} />
+                      <CostumText type={eTextType.ERROR} text={forgotpassword.forgotPasswordErrors?.email?.message} />
                     </div>
                     <div className="form-group">
-                      <button className="theme-btn btn-style-one" type="submit" onClick={handleForgotPassword(onForgotPassword)}>
-                        {useAuth.isLoading ? <Loading button={true} size="sm" /> : 'Send Email'}
+                      <button className="theme-btn btn-style-one" type="submit" onClick={forgotpassword.onForgotPassword}>
+                        {isLoading ? <Loading button={true} size="sm" /> : 'Send Email'}
                       </button>
                     </div>
-                    {useAuth.isError && (
-                      <AlertMessage
-                        dismissible={true}
-                        showLineBreak={false}
-                        message={useAuth?.message}
-                        type="danger"
-                        showAlert={forgotPasswordError}
-                        onClose={() => setForgotPasswordError(false)}
-                      />
-                    )}
-                    {useAuth.isSuccess && (
-                      <AlertMessage
-                        dismissible={true}
-                        showLineBreak={false}
-                        message={useAuth?.message}
-                        type="success"
-                        showAlert={forgotPasswordSuccess}
-                        onClose={() => setForgotPasswordSuccess(false)}
-                      />
-                    )}
-                    {useAuth.message && <AlertMessage dismissible={true} showLineBreak={false} message={useAuth?.message} type="primary" />}
                   </form>
                 </TabPanel>
               </Tabs>
@@ -379,10 +283,9 @@ const Auth: React.FC<AuthProps> = (props) => {
                     to="/login"
                     className="call-modal login"
                     onClick={() => {
-                      resetForgotPassword();
-                      clearForgotPasswordErrors();
-                    }}
-                  >
+                      forgotpassword.resetForgotPassword();
+                      forgotpassword.clearForgotPasswordErrors();
+                    }}>
                     Log In
                   </Link>
                 </div>

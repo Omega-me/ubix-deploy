@@ -1,9 +1,8 @@
-import { blogItems, candidateItems, employerItems, findJobItems, homeItems, pageItems, shopItems } from 'common/data';
-import { isActiveParent, isActiveLink, isActiveParentChaild } from '../../common/utils';
+import { blogItems, pageItems, shopItems } from 'common/data';
+import { isActiveLink, isActiveParentChaild } from '../../common/utils';
 import { Link, useLocation } from 'react-router-dom';
 
 const HeaderNavContent = () => {
-  // const router = useRouter();
   const location = useLocation();
 
   return (
@@ -19,35 +18,12 @@ const HeaderNavContent = () => {
             <Link to="jobListing">Find Jobs</Link>
           </li>
           {/* End findjobs menu items */}
-          {/* <li
-            className={`${
-              isActiveParent(employerItems, location.pathname) || location.pathname === '/employers-dashboard/dashboard' ? 'current' : ''
-            } dropdown`}>
-            <>Employers</>
-            <ul>
-                {employerItems.map((item) => (
-                  <li className="dropdown" key={item.id}>
-                    <span className={isActiveParentChaild(item.items, location.pathname) ? 'current' : ''}>{item.title}</span>
-                    <ul>
-                      {item.items.map((menu, i) => (
-                        <li className={isActiveLink(menu.routePath, location.pathname) ? 'current' : ''} key={i}>
-                          <Link to={menu.routePath}>{menu.name}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-                <li className={isActiveLink('/employers-dashboard/dashboard', location.pathname) ? 'current' : ''}>
-                  <Link to="/employers-dashboard/dashboard">Employers Dashboard</Link>
-                </li>
-              </ul>
-          </li> */}
           {/* End Employers menu items */}{' '}
           <li className={`${isActiveLink('/candidateslisting', location.pathname) ? 'current' : ''}`}>
             <Link to="candidateslisting">Candidates</Link>
           </li>
-          <li className={`${isActiveLink('/dashboard', location.pathname) ? 'current' : ''}`}>
-            <Link to="dashboard">Dashboard</Link>
+          <li className={`${isActiveLink('/profile', location.pathname) ? 'current' : ''}`}>
+            <Link to="/profile">Profile</Link>
           </li>
           {/* End Candidates menu items */}
           <li className={`${isActiveParentChaild(blogItems, location.pathname) ? 'current' : ''} dropdown`}>

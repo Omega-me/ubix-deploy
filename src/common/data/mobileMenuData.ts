@@ -337,15 +337,35 @@ export default [
   },
   {
     id: 11,
-    label: 'Dashboard',
+    label: 'Profile',
     items: [
       {
-        name: 'Employers Dashboard',
-        routePath: '/employers-dashboard/dashboard',
+        name: 'Edit Profile',
+        routePath: '/profile',
       },
       {
-        name: 'Candidates Dashboard',
-        routePath: '/candidates-dashboard/dashboard',
+        name: 'My Experiences',
+        routePath: '/profile/experiences',
+      },
+      {
+        name: 'Manage Jobs Created',
+        routePath: '/profile/managejobs',
+      },
+      {
+        name: 'Addresses',
+        routePath: '/profile/addresses',
+      },
+      {
+        name: 'Manage Subscriptions',
+        routePath: '/profile/subscriptions',
+      },
+      {
+        name: 'Chat',
+        routePath: '/profile/chat',
+      },
+      {
+        name: 'Logout',
+        routePath: '/profile/login',
       },
     ],
   },

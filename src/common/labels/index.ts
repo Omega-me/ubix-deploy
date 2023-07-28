@@ -1,4 +1,9 @@
 export const APP_TITLE = 'Ubix';
+export const APP_TITLE_LOGIN_SIGNUP = 'Ubix | Login/Signup';
+export const UBIX_CANDIDATES = 'Ubix | Candidates';
+export const UBIX_CANDIDATE_PROFILE = 'Ubix | Candidate Profile';
+export const UBIX_JOB_DETAILS = 'Ubix | Job Details';
+export const UBIX_JOB_LISTING = 'Ubix | Job listing';
 export const FAILED_TO_CREATE_AN_USER_PROFILE = 'Failed to create an user profile, please try again!';
 export const YOUR_EMAIL_WAS_CHANGED_SUCCESSFULLY = 'Your email was changed successfully';
 export const THERE_WAS_A_PROBLEM_UPDATING_YOUR_EMAIL = 'There was a problem updating your email, please try again';
@@ -10,3 +15,4 @@ export const AN_EMAIL_VERIFICATION_LINK_WAS_SENT_TO_YOUR_EMAIL_ACCOUNT = 'An ema
 export const THERE_WAS_A_PROBLEM_SENDING_EMAIL_VERFICATION = 'There was a problem sending email verfication, please try again';
 export const USER_HAS_BEEN_SUCCESSFULLY_LOGGED_OUT = 'User has been successfully logged out';
 export const THERE_WAS_A_PROBLEM_LOGGING_THE_USER_OUT = 'There was a problem logging the user out, please try again';
+export const THERE_WAS_A_PROBLEM_LOGGING_IN = 'There was a problem logging in, please try again';

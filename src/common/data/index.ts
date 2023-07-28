@@ -13,3 +13,4 @@ export { default as shopItemsData } from './shopItems';
 export { default as socialsData } from './socials';
 export { default as testimonialData } from './testimonial';
 export { default as topCompanyData } from './topCompany';
+export { default as genders } from './genders';

@@ -35,7 +35,7 @@ export class AuthReducer {
     }
   }
 
-  initializeUser(user: AuthData<UserDataDto>) {
+  initializeUser(user: AuthData<UserDataDto | { profile: boolean }>) {
     if (this._state) {
       this._state.data = user;
     }

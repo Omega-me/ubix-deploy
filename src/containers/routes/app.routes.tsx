@@ -1,14 +1,5 @@
 import { DashboardLayout } from 'components';
-import {
-  AuthPage,
-  CandidatesListingPage,
-  CandidateViewProfilePage,
-  HomePage,
-  JobDetailsPage,
-  JobListingPage,
-  TestAuthPage,
-  DashboardPage,
-} from 'containers/pages';
+import { AuthPage, CandidatesListingPage, CandidateViewProfilePage, HomePage, JobDetailsPage, JobListingPage, ProfilePage } from 'containers/pages';
 import { useRoutes, Navigate } from 'react-router-dom';
 
 export const AppRouter = () => {
@@ -21,14 +12,13 @@ export const AppRouter = () => {
     { path: '/login', element: <AuthPage /> },
     { path: '/signup', element: <AuthPage /> },
     { path: '/forgotpassword', element: <AuthPage /> },
-    // { path: '/testauth', element: <TestAuthPage /> },
     {
-      path: '/dashboard',
+      path: '/profile',
       children: [
         {
           element: (
             <DashboardLayout>
-              <DashboardPage />
+              <ProfilePage />
             </DashboardLayout>
           ),
           index: true,

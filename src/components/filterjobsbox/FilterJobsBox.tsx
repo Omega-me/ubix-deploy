@@ -1,200 +1,222 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import jobs from 'common/data/job-featured';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addCategory,
-  addDatePosted,
-  addDestination,
-  addKeyword,
-  addLocation,
-  addPerPage,
-  addSalary,
-  addSort,
-  addTag,
-  clearExperience,
-  clearJobType,
-} from 'common/features/filter/filterSlice';
-import { clearDatePostToggle, clearExperienceToggle, clearJobTypeToggle } from 'common/features/job/jobSlice';
 import { Link } from 'react-router-dom';
 
-const FilterJobsBox = () => {
-  const { jobList, jobSort } = useSelector((state: any) => state.filter);
-  const { keyword, location, destination, category, jobType, datePosted, experience, salary, tag } = jobList || {};
+const FilterJobBox = () => {
+  const jobTypeList = [
+    {
+      id: 1,
+      name: 'Freelancer',
+      value: 'freelancer',
+      isChecked: false,
+    },
+    {
+      id: 2,
+      name: 'Full Time',
+      value: 'full-time',
+      isChecked: false,
+    },
+    {
+      id: 3,
+      name: 'Part Time',
+      value: 'part-time',
+      isChecked: false,
+    },
+    {
+      id: 4,
+      name: 'Temporary',
+      value: 'temporary',
+      isChecked: false,
+    },
+  ];
+  const datePost = [
+    { id: 1, name: 'All', value: 'all', isChecked: false },
+    { id: 2, name: 'Last Hour', value: 'last-hour', isChecked: false },
+    {
+      id: 3,
+      name: 'Last 24 Hour',
+      value: 'last-24-hour',
+      isChecked: false,
+    },
+    { id: 4, name: 'Last 7 Days', value: 'last-7-days', isChecked: false },
+    {
+      id: 5,
+      name: 'Last 14 Days',
+      value: 'last-14-days',
+      isChecked: false,
+    },
+    {
+      id: 6,
+      name: 'Last 30 Days',
+      value: 'last-30-days',
+      isChecked: false,
+    },
+  ];
+  const experienceLavel = [
+    { id: 1, name: 'Fresh', value: 'fresh', isChecked: false },
+    { id: 2, name: '1 Year', value: '1-year', isChecked: false },
+    { id: 3, name: '2 Year', value: '2-year', isChecked: false },
+    { id: 4, name: '3 Year', value: '3-year', isChecked: false },
+    {
+      id: 5,
+      name: '4 Year',
+      value: '4-year',
+      isChecked: false,
+    },
+  ];
 
-  const { sort, perPage } = jobSort;
+  const content = jobs?.map((item) => (
+    <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
+      <div className="inner-box">
+        <div className="content">
+          <span className="company-logo">
+            <img src={item.logo} alt="item brand" />
+          </span>
+          <h4>
+            <Link to={`/job-single-v4/${item.id}`}>{item.jobTitle}</Link>
+          </h4>
 
-  const dispatch = useDispatch();
+          <ul className="job-info">
+            <li>
+              <span className="icon flaticon-briefcase"></span>
+              {item.company}
+            </li>
+            {/* compnay info */}
+            <li>
+              <span className="icon flaticon-map-locator"></span>
+              {item.location}
+            </li>
+            {/* location info */}
+            <li>
+              <span className="icon flaticon-clock-3"></span> {item.time}
+            </li>
+            {/* time info */}
+            <li>
+              <span className="icon flaticon-money"></span> {item.salary}
+            </li>
+            {/* salary info */}
+          </ul>
+          {/* End .job-info */}
 
-  // keyword filter on title
-  const keywordFilter = (item: any) => (keyword !== '' ? item.jobTitle.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()) : item);
-
-  // location filter
-  const locationFilter = (item: any) => (location !== '' ? item?.location?.toLocaleLowerCase().includes(location?.toLocaleLowerCase()) : item);
-
-  // location filter
-  const destinationFilter = (item: any) => item?.destination?.min >= destination?.min && item?.destination?.max <= destination?.max;
-
-  // category filter
-  const categoryFilter = (item: any) => (category !== '' ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase() : item);
-
-  // job-type filter
-  const jobTypeFilter = (item: any) =>
-    jobType?.length !== 0 && item?.jobType !== undefined ? jobType?.includes(item?.jobType[0]?.type.toLocaleLowerCase().split(' ').join('-')) : item;
-
-  // date-posted filter
-  const datePostedFilter = (item: any) =>
-    datePosted !== 'all' && datePosted !== '' ? item?.created_at?.toLocaleLowerCase().split(' ').join('-').includes(datePosted) : item;
-
-  // experience level filter
-  const experienceFilter = (item: any) =>
-    experience?.length !== 0 ? experience?.includes(item?.experience?.split(' ').join('-').toLocaleLowerCase()) : item;
-
-  // salary filter
-  const salaryFilter = (item: any) => item?.totalSalary?.min >= salary?.min && item?.totalSalary?.max <= salary?.max;
-
-  // tag filter
-  const tagFilter = (item: any) => (tag !== '' ? item?.tag === tag : item);
-
-  // sort filter
-  const sortFilter = (a: any, b: any) => (sort === 'des' ? a.id > b.id && -1 : a.id < b.id && -1);
-
-  const content = jobs
-    ?.filter(keywordFilter)
-    ?.filter(locationFilter)
-    ?.filter(destinationFilter)
-    ?.filter(categoryFilter)
-    ?.filter(jobTypeFilter)
-    ?.filter(datePostedFilter)
-    ?.filter(experienceFilter)
-    ?.filter(salaryFilter)
-    ?.filter(tagFilter)
-    ?.sort(sortFilter as any)
-    .slice(perPage.start, perPage.end !== 0 ? perPage.end : 18)
-    ?.map((item: any) => (
-      <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
-        <div className="inner-box">
-          <div className="content">
-            <span className="company-logo">
-              <img src={item.logo} alt="item brand" />
-            </span>
-            <h4>
-              <Link to={`/job-single-v5/${item.id}`}>{item.jobTitle}</Link>
-            </h4>
-
-            <ul className="job-info">
-              <li>
-                <span className="icon flaticon-briefcase"></span>
-                {item.company}
+          <ul className="job-other-info">
+            {item?.jobType?.map((val, i) => (
+              <li key={i} className={`${val.styleClass}`}>
+                {val.type}
               </li>
-              {/* compnay info */}
-              <li>
-                <span className="icon flaticon-map-locator"></span>
-                {item.location}
-              </li>
-              {/* location info */}
-              <li>
-                <span className="icon flaticon-clock-3"></span> {item.time}
-              </li>
-              {/* time info */}
-              <li>
-                <span className="icon flaticon-money"></span> {item.salary}
-              </li>
-              {/* salary info */}
-            </ul>
-            {/* End .job-info */}
+            ))}
+          </ul>
+          {/* End .job-other-info */}
 
-            <ul className="job-other-info">
-              {item?.jobType?.map((val: any, i: number) => (
-                <li key={i} className={`${val.styleClass}`}>
-                  {val.type}
-                </li>
-              ))}
-            </ul>
-            {/* End .job-other-info */}
-
-            <button className="bookmark-btn">
-              <span className="flaticon-bookmark"></span>
-            </button>
-          </div>
+          <button className="bookmark-btn">
+            <span className="flaticon-bookmark"></span>
+          </button>
         </div>
       </div>
-      // End all jobs
-    ));
-
-  // sort handler
-  const sortHandler = (e: any) => {
-    dispatch(addSort(e.target.value));
-  };
-
-  // per page handler
-  const perPageHandler = (e: any) => {
-    const pageData = JSON.parse(e.target.value);
-    dispatch(addPerPage(pageData));
-  };
-
-  // clear all filters
-  const clearAll = () => {
-    dispatch(addKeyword(''));
-    dispatch(addLocation(''));
-    dispatch(addDestination({ min: 0, max: 100 }));
-    dispatch(addCategory(''));
-    dispatch(clearJobType());
-    dispatch(clearJobTypeToggle());
-    dispatch(addDatePosted(''));
-    dispatch(clearDatePostToggle());
-    dispatch(clearExperience());
-    dispatch(clearExperienceToggle());
-    dispatch(addSalary({ min: 0, max: 20000 }));
-    dispatch(addTag(''));
-    dispatch(addSort(''));
-    dispatch(addPerPage({ start: 0, end: 0 }));
-  };
+    </div>
+    // End all jobs
+  ));
 
   return (
     <>
       <div className="ls-switcher">
-        <div className="show-result">
-          <div className="show-1023">
-            <button type="button" className="theme-btn toggle-filters " data-bs-toggle="offcanvas" data-bs-target="#filter-sidebar">
-              <span className="icon icon-filter"></span> Filter
-            </button>
-          </div>
-          {/* Collapsible sidebar button */}
+        <div className="showing-result">
+          <div className="top-filters">
+            <div className="form-group">
+              <select className="chosen-single form-select">
+                <option value="">Job Type</option>
+                {jobTypeList?.map((item: any) => (
+                  <option value={item.value} key={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* End job type filter */}
 
-          <div className="text">
-            Show <strong>{content?.length}</strong> jobs
+            <div className="form-group">
+              <select className="chosen-single form-select">
+                {datePost?.map((item: any) => (
+                  <option value={item.value} key={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* End date posted filter */}
+
+            <div className="form-group">
+              <select className="chosen-single form-select">
+                <option>Experience Level</option>
+                {experienceLavel?.map((item: any) => (
+                  <option value={item.value} key={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* End ecperience level filter */}
+
+            <div className="form-group">
+              <select className="chosen-single form-select">
+                <option
+                  value={JSON.stringify({
+                    min: 0,
+                    max: 20000,
+                  })}
+                >
+                  Salary estimate
+                </option>
+                <option
+                  value={JSON.stringify({
+                    min: 0,
+                    max: 5000,
+                  })}
+                >
+                  0 - 5000
+                </option>
+                <option
+                  value={JSON.stringify({
+                    min: 5000,
+                    max: 10000,
+                  })}
+                >
+                  5000 - 10000
+                </option>
+                <option
+                  value={JSON.stringify({
+                    min: 10000,
+                    max: 15000,
+                  })}
+                >
+                  10000 - 15000
+                </option>
+                <option
+                  value={JSON.stringify({
+                    min: 15000,
+                    max: 20000,
+                  })}
+                >
+                  15000 - 20000
+                </option>
+              </select>
+            </div>
+            {/* End salary estimate filter */}
           </div>
         </div>
-        {/* End show-result */}
+        {/* End .showing-result */}
 
         <div className="sort-by">
-          {keyword !== '' ||
-          location !== '' ||
-          destination?.min !== 0 ||
-          destination?.max !== 100 ||
-          category !== '' ||
-          jobType?.length !== 0 ||
-          datePosted !== '' ||
-          experience?.length !== 0 ||
-          salary?.min !== 0 ||
-          salary?.max !== 20000 ||
-          tag !== '' ||
-          sort !== '' ||
-          perPage.start !== 0 ||
-          perPage.end !== 0 ? (
-            <button onClick={clearAll} className="btn btn-danger text-nowrap me-2" style={{ minHeight: '45px', marginBottom: '15px' }}>
-              Clear All
-            </button>
-          ) : undefined}
+          <button className="btn btn-danger text-nowrap me-2" style={{ minHeight: '45px', marginBottom: '15px' }}>
+            Clear All
+          </button>
 
-          <select value={sort} className="chosen-single form-select" onChange={sortHandler}>
+          <select className="chosen-single form-select">
             <option value="">Sort by (default)</option>
             <option value="asc">Newest</option>
             <option value="des">Oldest</option>
           </select>
           {/* End select */}
 
-          <select onChange={perPageHandler} className="chosen-single form-select ms-3 " value={JSON.stringify(perPage)}>
+          <select className="chosen-single form-select ms-3 ">
             <option
               value={JSON.stringify({
                 start: 0,
@@ -202,6 +224,14 @@ const FilterJobsBox = () => {
               })}
             >
               All
+            </option>
+            <option
+              value={JSON.stringify({
+                start: 0,
+                end: 10,
+              })}
+            >
+              10 per page
             </option>
             <option
               value={JSON.stringify({
@@ -214,14 +244,6 @@ const FilterJobsBox = () => {
             <option
               value={JSON.stringify({
                 start: 0,
-                end: 25,
-              })}
-            >
-              25 per page
-            </option>
-            <option
-              value={JSON.stringify({
-                start: 0,
                 end: 30,
               })}
             >
@@ -230,19 +252,41 @@ const FilterJobsBox = () => {
           </select>
           {/* End select */}
         </div>
+        {/* End sort by filter */}
       </div>
-      {/* End top filter bar box */}
+      {/* <!-- ls Switcher --> */}
+
       <div className="row">{content}</div>
-      {/* <!-- List Show More --> */}
-      <div className="ls-show-more">
-        <p>Show 36 of 497 Jobs</p>
-        <div className="bar">
-          <span className="bar-inner" style={{ width: '40%' }}></span>
-        </div>
-        <button className="show-more">Show More</button>
-      </div>
+      {/* End .row with jobs */}
+
+      <nav className="ls-pagination">
+        <ul>
+          <li className="prev">
+            <a href="#">
+              <i className="fa fa-arrow-left"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#">1</a>
+          </li>
+          <li>
+            <a href="#" className="current-page">
+              2
+            </a>
+          </li>
+          <li>
+            <a href="#">3</a>
+          </li>
+          <li className="next">
+            <a href="#">
+              <i className="fa fa-arrow-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      {/* <!-- End Pagination --> */}
     </>
   );
 };
 
-export default FilterJobsBox;
+export default FilterJobBox;

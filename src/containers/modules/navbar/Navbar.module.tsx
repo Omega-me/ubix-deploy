@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { AuthData, UserDataDto } from 'common/interfaces';
 import { Navbar } from 'components';
+import useAuth from 'hooks/useAuth';
+import { useEffect, useState } from 'react';
 
-const NavbarModule = () => {
+const NavbarModule = (props: { isLoginPage?: boolean }) => {
   const [navbar, setNavbar] = useState(false);
+  const { data: userData, signOut } = useAuth<AuthData<UserDataDto>>();
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -16,7 +19,7 @@ const NavbarModule = () => {
     window.addEventListener('scroll', changeBackground);
   }, []);
 
-  return <Navbar navbar={navbar} />;
+  return <Navbar signOut={signOut} userData={userData} isLoginPage={props.isLoginPage} navbar={navbar} />;
 };
 
 export default NavbarModule;

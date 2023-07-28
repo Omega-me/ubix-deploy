@@ -4,19 +4,58 @@ import { HeaderNavContent, SidebarFooter, SidebarHeader } from 'components';
 import { Menu, MenuItem, ProSidebarProvider, Sidebar, SubMenu } from 'react-pro-sidebar';
 import { Link } from 'react-router-dom';
 import logo from 'assets/images/logo.svg';
+import { AuthData, UserDataDto } from 'common/interfaces';
 
 interface HeaderProps {
   navbar: boolean;
+  isLoginPage?: boolean;
+  userData: AuthData<UserDataDto>;
+  signOut: () => Promise<void>;
 }
 
-const Navbar: React.FC<HeaderProps> = (props) => {
+const Navbar: React.FC<HeaderProps> = props => {
+  const pathName = location.pathname.split('/')[1];
+  const renderButtons = () => {
+    if (props.isLoginPage) {
+      return null;
+    }
+
+    if (props.userData) {
+      return (
+        <>
+          <Link to="/profile" className="theme-btn btn-style-three">
+            Go to profile
+          </Link>
+          <button onClick={props.signOut} className="theme-btn btn-style-one mx-3">
+            Logout
+          </button>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Link to="/login" className="theme-btn btn-style-three">
+          Login / Register
+        </Link>
+      </>
+    );
+  };
   return (
     <>
       {/* Navbar */}
-      <header className={`main-header  ${props.navbar ? 'fixed-header animated slideInDown' : ''}`}>
-        {/* <!-- Main box --> */}
+      <header
+        className={`main-header ${
+          props.isLoginPage
+            ? 'fixed-header'
+            : props.navbar && pathName !== 'profile'
+            ? 'fixed-header animated slideInDown'
+            : pathName === 'profile'
+            ? 'fixed-header header-shaddow'
+            : ''
+        }`}
+      >
         <div className="main-box">
-          {/* <!--Nav Outer --> */}
           <div className="nav-outer">
             <div className="logo-box">
               <div className="logo">
@@ -25,30 +64,16 @@ const Navbar: React.FC<HeaderProps> = (props) => {
                 </Link>
               </div>
             </div>
-            {/* End .logo-box */}
 
             <HeaderNavContent />
-            {/* <!-- Main Menu End--> */}
           </div>
-          {/* End .nav-outer */}
 
           <div className="outer-box">
-            {/* <!-- Add Listing --> */}
-            {/* <Link to="/candidates-dashboard/cv-manager" className="upload-cv">
-              Upload your CV
-            </Link> */}
-            {/* <!-- Login/Register --> */}
-            <div className="btn-box">
-              <Link to="/login" className="theme-btn btn-style-three call-modal">
-                Login / Register
-              </Link>
-              <Link to="/employers-dashboard/post-jobs" className="theme-btn btn-style-one">
-                Job Post
-              </Link>
-            </div>
+            <div className="btn-box">{renderButtons()}</div>
           </div>
         </div>
       </header>
+
       {/* Navbar Mobile*/}
       <header className="main-header main-header-mobile">
         <div className="auto-container">
@@ -89,7 +114,7 @@ const Navbar: React.FC<HeaderProps> = (props) => {
                     </Menu>
                   </Sidebar>
                 </ProSidebarProvider>
-                <SidebarFooter />
+                <SidebarFooter signOut={props.signOut} userData={props.userData} isLoginPage={props.isLoginPage} />
               </div>
 
               {/* <!-- Main Menu End--> */}
@@ -112,9 +137,6 @@ const Navbar: React.FC<HeaderProps> = (props) => {
           </div>
         </div>
       </header>
-      {/* <SignupLoginModal id="loginPopupModal" useAuth={props.useAuth} />
-      <SignupLoginModal id="registerModal" useAuth={props.useAuth} />
-      <SignupLoginModal id="forgotPassword" useAuth={props.useAuth} /> */}
     </>
   );
 };

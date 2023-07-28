@@ -8,8 +8,8 @@ import {
   PricingSection,
   TestimonialsSection,
   TopCompaniesSection,
+  AboutSection,
 } from 'components';
-import { AboutSection } from 'components';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface HomeProps {}

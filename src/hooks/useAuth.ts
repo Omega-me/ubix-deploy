@@ -22,6 +22,7 @@ import {
   updateEmailService,
   updatePasswordService,
 } from 'services';
+import { toast } from 'react-toastify';
 
 const useAuth = <TData = any>() => {
   const navigate = useNavigate();
@@ -51,7 +52,12 @@ const useAuth = <TData = any>() => {
 
   const refreshUser = async () => {
     const user = getCurrentUserService();
-    dispatch(initializeUserState(await getUserDataService(user as User)));
+    if (user) {
+      const userData = await getUserDataService(user as User);
+      if (userData) {
+        dispatch(initializeUserState(userData));
+      }
+    }
   };
 
   /**
@@ -66,12 +72,25 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const signin = (config: { data: LoginUserDto; navigateUrl?: To; navigateOptions?: NavigateOptions | undefined }) => {
+  const signin = (config: {
+    data: LoginUserDto;
+    navigateUrl?: To;
+    navigateOptions?: NavigateOptions | undefined;
+    toast?: { success?: string; error?: string };
+  }) => {
     dispatch(signinAction(config.data)).then(res => {
       if (res.meta.requestStatus === 'fulfilled') {
         resetAuthMessageState();
         if (config.navigateUrl) {
           navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+        }
+        if (config.toast) {
+          toast.success(config?.toast?.success);
+        }
+      }
+      if (res.meta.requestStatus === 'rejected') {
+        if (config?.toast) {
+          toast.error(config?.toast?.error);
         }
       }
     });
@@ -81,12 +100,20 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const signinWithGoogle = (config: { navigateUrl?: To; navigateOptions?: NavigateOptions | undefined }) => {
+  const signinWithGoogle = (config: { navigateUrl?: To; navigateOptions?: NavigateOptions | undefined; toast?: { success?: string; error?: string } }) => {
     dispatch(signinWithGoogleAction()).then(res => {
       if (res.meta.requestStatus === 'fulfilled') {
         resetAuthMessageState();
         if (config.navigateUrl) {
           navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+        }
+        if (config.toast) {
+          toast.success(config?.toast?.success);
+        }
+      }
+      if (res.meta.requestStatus === 'rejected') {
+        if (config?.toast) {
+          toast.error(config?.toast?.error);
         }
       }
     });
@@ -109,6 +136,7 @@ const useAuth = <TData = any>() => {
     data: { otp: string; confirmation: ConfirmationResult };
     navigateUrl?: To;
     navigateOptions?: NavigateOptions | undefined;
+    toast?: { success?: string; error?: string };
   }) => {
     dispatch(signInWithPhoneNumberAction(config.data)).then(res => {
       if (res.meta.requestStatus === 'fulfilled') {
@@ -116,6 +144,14 @@ const useAuth = <TData = any>() => {
         resetAuthMessageState();
         if (config.navigateUrl) {
           navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+        }
+        if (config.toast) {
+          toast.success(config?.toast?.success);
+        }
+      }
+      if (res.meta.requestStatus === 'rejected') {
+        if (config?.toast) {
+          toast.error(config?.toast?.error);
         }
       }
     });
@@ -125,12 +161,25 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const signup = (config: { data: SignupUserDto; navigateUrl?: To; navigateOptions?: NavigateOptions | undefined }) => {
+  const signup = (config: {
+    data: SignupUserDto;
+    navigateUrl?: To;
+    navigateOptions?: NavigateOptions | undefined;
+    toast?: { success?: string; error?: string };
+  }) => {
     dispatch(signupAction(config.data)).then(res => {
       if (res.meta.requestStatus === 'fulfilled') {
         resetAuthMessageState();
         if (config.navigateUrl) {
           navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+        }
+        if (config?.toast) {
+          toast.success(config?.toast?.success);
+        }
+      }
+      if (res.meta.requestStatus === 'rejected') {
+        if (config?.toast) {
+          toast.error(config?.toast?.error);
         }
       }
     });
@@ -146,36 +195,64 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const updateEmail = async (config: { user: User; newEmail: string }) => {
-    const message = await updateEmailService({ user: config.user, newEmail: config.newEmail });
-    dispatch(setMessageStateAction(message));
+  const updateEmail = async (config: { user: User; newEmail: string; toast?: boolean }) => {
+    const data = await updateEmailService({ user: config.user, newEmail: config.newEmail });
+    dispatch(setMessageStateAction(data.message));
+    if (config.toast) {
+      if (data.succes) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    }
   };
 
   /**
    *
    * @param config
    */
-  const updatePassword = async (config: { user: User; newPassword: string }) => {
-    const message = await updatePasswordService({ user: config.user, newPassword: config.newPassword });
-    dispatch(setMessageStateAction(message));
+  const updatePassword = async (config: { user: User; newPassword: string; toast?: boolean }) => {
+    const data = await updatePasswordService({ user: config.user, newPassword: config.newPassword });
+    dispatch(setMessageStateAction(data.message));
+    if (config.toast) {
+      if (data.succes) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    }
   };
 
   /**
    *
    * @param config
    */
-  const sendPasswordResetEmail = async (config: { email: string; actionCodeSettings?: ActionCodeSettings | undefined }) => {
-    const message = await sendPasswordResetEmailService({ email: config.email, actionCodeSettings: config.actionCodeSettings });
-    dispatch(setMessageStateAction(message));
+  const sendPasswordResetEmail = async (config: { email: string; actionCodeSettings?: ActionCodeSettings | undefined; toast?: boolean }) => {
+    const data = await sendPasswordResetEmailService({ email: config.email, actionCodeSettings: config.actionCodeSettings });
+    dispatch(setMessageStateAction(data.message));
+    if (config.toast) {
+      if (data.succes) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    }
   };
 
   /**
    *
    * @param config
    */
-  const sendEmailVerification = async (config: { user: User; actionCodeSettings?: ActionCodeSettings | undefined }) => {
-    const message = await sendEmailVerificationService({ user: config.user, actionCodeSettings: config.actionCodeSettings });
-    dispatch(setMessageStateAction(message));
+  const sendEmailVerification = async (config: { user: User; actionCodeSettings?: ActionCodeSettings | undefined; toast?: boolean }) => {
+    const data = await sendEmailVerificationService({ user: config.user, actionCodeSettings: config.actionCodeSettings });
+    dispatch(setMessageStateAction(data.message));
+    if (config.toast) {
+      if (data.succes) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    }
   };
 
   return {

@@ -8,5 +8,4 @@ export { default as CandidatesListingModule } from './candidateslisting/Candidat
 export { default as CandidateViewProfileModule } from './candidateviewprofile/CandidateViewProfile.module';
 export { default as CreateProfileModalModule } from './createprofilemodal/CreateProfileModal.module';
 export { default as AuthModule } from './auth/Auth.module';
-export { default as DashboardModule } from './dashboard/Dashboard.module';
-export { default as TestAuthModule } from './AuthTest/TestAuth.module';
+export { default as ProfileModule } from './profile/Profile.module';
