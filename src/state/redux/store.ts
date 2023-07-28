@@ -13,7 +13,7 @@ export const store = configureStore({ reducer: rootReducer });
 // initialise user auth state
 auth.onAuthStateChanged(async user => {
   if (user) {
-    const userData: AuthData<UserDataDto> | null = await getUserDataService(user);
+    const userData: AuthData<UserDataDto> | AuthData<{ profile: boolean; }> | null = await getUserDataService(user);
     if (userData) {
       store.dispatch(initializeUserState(userData));
     } else {

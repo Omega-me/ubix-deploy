@@ -115,7 +115,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = (props) => {
                     <select {...registerCreateProfile('gender', { required: 'This field is required!' })}>
                       <option>{eGender.MALE}</option>
                       <option>{eGender.FEMALE}</option>
-                      <option>{eGender.UNISEX}</option>
+                      <option>{eGender.OTHER}</option>
                     </select>
                   </div>
 
