@@ -41,15 +41,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ) : (
         <div className="page-wrapper">
           {pathName !== eRoutes.SIGNUP &&
-          pathName !== eRoutes.LOGIN &&
-          pathName !== eRoutes.FORGOT_PASSWORD &&
-          pathName !== eRoutes.PHONE_LOGIN_REGISTER ? (
-            <NavbarModule />
-          ) : (
-            <NavbarModule isLoginPage={true} />
-          )}
+            pathName !== eRoutes.LOGIN &&
+            pathName !== eRoutes.FORGOT_PASSWORD &&
+            pathName !== eRoutes.PHONE_LOGIN_REGISTER && <NavbarModule />}
           {children}
-          {!pathName.startsWith(eRoutes.PROFILE) && <FooterModule />}
+          {!pathName.startsWith(eRoutes.PROFILE) &&
+            pathName !== eRoutes.SIGNUP &&
+            pathName !== eRoutes.LOGIN &&
+            pathName !== eRoutes.FORGOT_PASSWORD &&
+            pathName !== eRoutes.PHONE_LOGIN_REGISTER && <FooterModule />}
           <ScrollToTop />
           <ToastContainer {...toastOptions} newestOnTop={true} />
         </div>

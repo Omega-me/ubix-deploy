@@ -9,9 +9,9 @@ const HomeBannerSection = () => {
             <div className="inner-column">
               <div className="title-box" data-aos="fade-up">
                 <h3>
-                  Join us & Explore Thousands <br /> of Jobs
+                  Welcome <br /> Let’s seek new opportunities!
                 </h3>
-                <div className="text">Find Jobs, Employment & Career Opportunities</div>
+                {/* <div className="text">Find Jobs, Employment & Career Opportunities</div> */}
               </div>
 
               {/* <!-- Job Search Form --> */}
@@ -52,8 +52,8 @@ const HomeBannerSection = () => {
               {/* <PopularSearch /> */}
               <div className="popular-searches" data-aos="fade-up" data-aos-delay="1000">
                 <span className="title">Popular Searches : </span>
-                <a href="#">Designer</a>, <a href="#">Developer</a>, <a href="#">Web</a>,<a href="#"> IOS</a>, <a href="#">PHP</a>, <a href="#">Senior</a>,
-                <a href="#"> Engineer</a>,
+                <a href="#">Designer</a>, <a href="#">Developer</a>, <a href="#">Web</a>,<a href="#"> IOS</a>, <a href="#">PHP</a>,{' '}
+                <a href="#">Senior</a>,<a href="#"> Engineer</a>,
               </div>
               {/* <!-- End Popular Search --> */}
             </div>
