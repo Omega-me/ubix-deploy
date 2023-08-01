@@ -1,3 +1,4 @@
+import { eSigninProvider } from 'common/enums';
 import { ConfirmationResult } from 'firebase/auth';
 
 export interface IStateThunk<TData = unknown> {
@@ -5,6 +6,9 @@ export interface IStateThunk<TData = unknown> {
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
+  isGoogleLoading: boolean;
+  isAppleLoading: boolean;
+  isPhoneLoading: boolean;
   message: string;
   phoneConfirmation: ConfirmationResult | null;
 }
@@ -12,5 +16,9 @@ export interface IStateThunk<TData = unknown> {
 export interface AuthData<TUser = unknown> {
   user: TUser | null;
   token: string;
-  emailVerified: boolean;
+  signinProvider: eSigninProvider;
+  emailVerified?: boolean;
+  email?: string;
+  phone?: string;
+  picture?: string;
 }

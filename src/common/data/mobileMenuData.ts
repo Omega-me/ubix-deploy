@@ -340,7 +340,7 @@ export default [
     label: 'Profile',
     items: [
       {
-        name: 'Edit Profile',
+        name: 'My profile',
         routePath: '/profile',
       },
       {

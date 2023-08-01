@@ -1,6 +1,18 @@
 import { FilterJobsBox } from 'components';
+import { JobDataDto } from 'common/interfaces';
 
-const JobListing = () => {
+interface JobListingProps {
+  jobsProps: {
+    jobs: JobDataDto[];
+    setPage: React.Dispatch<React.SetStateAction<number>>;
+    pages: number[];
+    page: number;
+    isLoading: boolean;
+  };
+  setCategory: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const JobListing: React.FC<JobListingProps> = (props) => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -22,12 +34,14 @@ const JobListing = () => {
               {/* <!-- Form Group --> */}
 
               <div className="form-group col-lg-3 col-md-12 col-sm-12 location">
-                <select className="form-select">
-                  <option value="">Choose a category</option>
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="industrial">Industrial</option>
-                  <option value="apartments">Apartments</option>
+                <select
+                  className="form-select"
+                  onChange={(e: any) => {
+                    props.setCategory(e.target.value);
+                  }}
+                >
+                  <option value="near-me">Near me</option>
+                  <option value="recent">Recent</option>
                 </select>
                 <span className="icon flaticon-briefcase"></span>
               </div>
@@ -51,7 +65,7 @@ const JobListing = () => {
           <div className="row">
             <div className="content-column col-lg-12">
               <div className="ls-outer">
-                <FilterJobsBox />
+                <FilterJobsBox jobsProps={props.jobsProps} />
               </div>
             </div>
             {/* <!-- End Content Column --> */}

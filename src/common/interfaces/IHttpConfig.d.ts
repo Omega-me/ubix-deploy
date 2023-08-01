@@ -20,10 +20,10 @@ export interface IResponse<TData = unknown> {
 }
 
 interface IQueryOptions extends Omit<UseQueryOptions<TData, any, any, any>, 'queryKey' | 'queryFn'> {
-  onSuccessFn: (data: TData) => void;
+  onSuccessFn?: (data: TData) => void;
 }
 interface IMutationOptions extends Omit<UseMutationOptions<TData, any, any, any>, 'mutationFn'> {
-  onSuccessFn: (data: TData) => void;
+  onSuccessFn?: (data: TData) => void;
 }
 export interface IQueryConfig<TData = unknown> {
   httpConfig?: IHttpConfig<TData>;

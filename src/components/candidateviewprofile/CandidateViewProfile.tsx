@@ -1,31 +1,22 @@
-import candidates from 'common/data/candidates';
 import candidateResume from 'common/data/candidateResume';
 import galleryItem from 'common/data/gallery';
-import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Gallery, Item } from 'react-photoswipe-gallery';
 import { Social } from 'components';
+import { CandidateDataDto } from 'common/interfaces';
+import maleAvatar from 'assets/images/maleAvatar.png';
 
-const CandidateViewProfile = () => {
-  const [candidate, setCandidates] = useState<any>({});
-  const location = useLocation();
-  const { slug } = useParams();
-  const id = location?.search.split('=')[1];
+interface CandidateViewProfileProps {
+  userData: CandidateDataDto;
+}
 
-  useEffect(() => {
-    if (!id) <h1>Loading...</h1>;
-    else setCandidates(candidates.find((item: any) => item.id == id));
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return () => {};
-  }, [id]);
-
+const CandidateViewProfile: React.FC<CandidateViewProfileProps> = (props) => {
+  const { userData } = props;
   const skills = ['app', 'administrative', 'android', 'wordpress', 'design', 'react'];
 
   return (
     <>
       {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
+      {/* <span className="header-span"></span> */}
       {/* <!-- Job Detail Section --> */}
       <section className="candidate-detail-section style-three">
         <div className="upper-box">
@@ -33,41 +24,40 @@ const CandidateViewProfile = () => {
             <div className="candidate-block-six">
               <div className="inner-box">
                 <figure className="image">
-                  <img src={candidate?.avatar} alt="avatar" />
+                  {' '}
+                  {userData?.profileImage ? <img src={userData?.profileImage} alt="logo" /> : <img src={maleAvatar} alt="logo" />}
                 </figure>
-                <h4 className="name">{candidate?.name}</h4>
-                <span className="designation">{candidate?.designation}</span>
+                <h4 className="name">{userData?.fullName}</h4>
+                <span className="designation">{userData?.role}</span>
 
                 <div className="content">
                   <ul className="post-tags">
-                    {candidate?.tags?.map((val: any, i: number) => (
+                    {userData?.tags?.map((val: string, i: number) => (
                       <li key={i}>{val}</li>
                     ))}
                   </ul>
                   {/* End post-tags */}
 
-                  <ul className="candidate-info">
+                  <ul className="candidate-info" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                     <li>
                       <span className="icon flaticon-map-locator"></span>
-                      {candidate?.location}
+                      {userData?.address + ', ' + userData?.country}
                     </li>
-                    <li>
-                      <span className="icon flaticon-money"></span> ${candidate?.hourlyRate} / hour
-                    </li>
-                    <li>
+                    {/* <li><span className="icon flaticon-money"></span> ${candidate?.salary} / hour</li> */}
+                    {/* <li>
                       <span className="icon flaticon-clock"></span> Member Since,Aug 19, 2020
-                    </li>
+                    </li> */}
                   </ul>
                   {/* End candidate-info */}
 
-                  <div className="btn-box">
+                  {/* <div className="btn-box">
                     <a className="theme-btn btn-style-one" href="/images/sample.pdf" download>
                       Download CV
                     </a>
                     <button className="bookmark-btn">
                       <i className="flaticon-bookmark"></i>
                     </button>
-                  </div>
+                  </div> */}
                   {/* Download cv box */}
                 </div>
                 {/* End .content */}
@@ -83,7 +73,7 @@ const CandidateViewProfile = () => {
             <div className="row">
               <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
                 <aside className="sidebar">
-                  <div className="sidebar-widget">
+                  {/* <div className="sidebar-widget">
                     <div className="widget-content">
                       <ul className="job-overview">
                         <li>
@@ -129,33 +119,43 @@ const CandidateViewProfile = () => {
                         </li>
                       </ul>
                     </div>
-                  </div>
+                  </div> */}
                   {/* End .sidebar-widget conadidate overview */}
 
-                  <div className="sidebar-widget social-media-widget">
-                    <h4 className="widget-title">Social media</h4>
-                    <div className="widget-content">
-                      <div className="social-links">
-                        <Social />
+                  {userData?.socials && userData?.socials?.length > 0 && (
+                    <div className="sidebar-widget social-media-widget">
+                      <h4 className="widget-title">Social media</h4>
+                      <div className="widget-content">
+                        <div className="social-links">
+                          <div className="social-links">
+                            {userData?.socials?.map((item, index) => (
+                              <a href={item} target="_blank" rel="noopener noreferrer" key={index}>
+                                <i className={`fab ${item}`}>{item}</i>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                   {/* End .sidebar-widget social-media-widget */}
 
-                  <div className="sidebar-widget">
-                    <h4 className="widget-title">Professional Skills</h4>
-                    <div className="widget-content">
-                      <ul className="job-skills">
+                  {userData?.tags && userData?.tags?.length && (
+                    <div className="sidebar-widget">
+                      <h4 className="widget-title">Tags</h4>
+                      <div className="widget-content">
                         <ul className="job-skills">
-                          {skills.map((skill, i) => (
-                            <li key={i}>
-                              <a href="#">{skill}</a>
-                            </li>
-                          ))}
+                          <ul className="job-skills">
+                            {userData?.tags?.map((tag, i) => (
+                              <li key={i}>
+                                <a href="#">{tag}</a>
+                              </li>
+                            ))}
+                          </ul>
                         </ul>
-                      </ul>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   {/* End .sidebar-widget skill widget */}
 
                   <div className="sidebar-widget contact-widget">
@@ -200,20 +200,10 @@ const CandidateViewProfile = () => {
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 <div className="job-detail">
                   <h4>Candidates About</h4>
-                  <p>
-                    Hello my name is Nicole Wells and web developer from Portland. In pharetra orci dignissim, blandit mi semper, ultricies diam.
-                    Suspendisse malesuada suscipit nunc non volutpat. Sed porta nulla id orci laoreet tempor non consequat enim. Sed vitae aliquam
-                    velit. Aliquam ante erat, blandit at pretium et, accumsan ac est. Integer vehicula rhoncus molestie. Morbi ornare ipsum sed sem
-                    condimentum, et pulvinar tortor luctus. Suspendisse condimentum lorem ut elementum aliquam.
-                  </p>
-                  <p>
-                    Mauris nec erat ut libero vulputate pulvinar. Aliquam ante erat, blandit at pretium et, accumsan ac est. Integer vehicula rhoncus
-                    molestie. Morbi ornare ipsum sed sem condimentum, et pulvinar tortor luctus. Suspendisse condimentum lorem ut elementum aliquam.
-                    Mauris nec erat ut libero vulputate pulvinar.
-                  </p>
+                  <p>{userData?.about ? userData?.about : 'No info.'}</p>
 
                   {/* <!-- Portfolio --> */}
-                  <div className="portfolio-outer">
+                  {/* <div className="portfolio-outer">
                     <div className="row">
                       <Gallery>
                         {galleryItem.map((singleItem: any) => (
@@ -231,7 +221,7 @@ const CandidateViewProfile = () => {
                         ))}
                       </Gallery>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* <!-- Candidate Resume Start --> */}
                   {candidateResume.map((resume: any) => (

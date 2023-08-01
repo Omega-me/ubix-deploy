@@ -1,0 +1,16 @@
+export enum eRoutes {
+  HOME = '/',
+  JOBLISTING = '/jobs-listing',
+  JOBLISTING_DETAIL = '/jobs-listing/:slug',
+  CANDIDATESLISTING = '/candidates-listing',
+  CANDIDATESLISTING_DETAIL = '/candidates-listing/:slug',
+  LOGIN = '/login',
+  PHONE_LOGIN_REGISTER = '/phone-login-register',
+  SIGNUP = '/signup',
+  FORGOT_PASSWORD = '/forgot-password',
+  PROFILE = '/profile',
+  EXPERIENCES = '/profile/experiences',
+  POST_JOBS = '/profile/post-jobs',
+  POST_JOBS_EDIT = '/profile/post-jobs/:slug',
+  MANAGE_JOBS_CREATED = '/profile/manage-jobs-created',
+}

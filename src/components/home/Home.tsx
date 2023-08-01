@@ -1,15 +1,6 @@
 import React from 'react';
 import {} from 'react-firebase-hooks/auth';
-import {
-  ClientsSection,
-  HomeBannerSection,
-  JobCategoriesSection,
-  JobFeaturedSection,
-  PricingSection,
-  TestimonialsSection,
-  TopCompaniesSection,
-  AboutSection,
-} from 'components';
+import { HomeBannerSection, JobCategoriesSection, JobFeaturedSection, PricingSection, AboutSection } from 'components';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface HomeProps {}
@@ -21,7 +12,7 @@ const Home: React.FC<HomeProps> = () => {
 
       {/* <!-- End Banner Section Three--> */}
 
-      <ClientsSection />
+      {/* <ClientsSection /> */}
       {/* <!-- End Clients Section--> */}
 
       <JobCategoriesSection />
@@ -32,10 +23,10 @@ const Home: React.FC<HomeProps> = () => {
 
       {/* <!-- End Job Section --> */}
 
-      <TestimonialsSection />
+      {/* <TestimonialsSection /> */}
       {/* <!-- End Testimonial Section --> */}
 
-      <TopCompaniesSection />
+      {/* <TopCompaniesSection /> */}
       {/* <!-- End Top Companies --> */}
 
       <AboutSection />

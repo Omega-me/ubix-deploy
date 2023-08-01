@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'state/redux/store';
-import { signInWithPhoneNumberAction, signinAction, signinWithGoogleAction, signupAction } from 'state/redux/actions/auth.action';
+import { signInWithPhoneNumberAction, signinAction, signinWithAppleAction, signinWithGoogleAction, signupAction } from 'state/redux/actions/auth.action';
 import { LoginUserDto, SignupUserDto } from 'common/interfaces';
 import {
   resetAuthMessageState as resetMessageAction,
@@ -10,6 +10,8 @@ import {
   resetAuthState as resetAction,
   initializeUserState,
   setPhoneConfirmationState,
+  setIsPhoneLoadingState,
+  resetIsPhoneLoadingState,
 } from 'state/redux/store/auth.store';
 import { ActionCodeSettings, ConfirmationResult, User } from 'firebase/auth';
 import {
@@ -27,7 +29,9 @@ import { toast } from 'react-toastify';
 const useAuth = <TData = any>() => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data, isError, isLoading, isSuccess, message, phoneConfirmation } = useAppSelector(state => state.authState);
+  const { data, isError, isLoading, isGoogleLoading, isAppleLoading, isPhoneLoading, isSuccess, message, phoneConfirmation } = useAppSelector(
+    state => state.authState
+  );
 
   /**
    *@summary dispatches resetAuthState
@@ -121,10 +125,35 @@ const useAuth = <TData = any>() => {
 
   /**
    *
+   * @param config
+   */
+  const signinWithApple = (config: { navigateUrl?: To; navigateOptions?: NavigateOptions | undefined; toast?: { success?: string; error?: string } }) => {
+    dispatch(signinWithAppleAction()).then(res => {
+      if (res.meta.requestStatus === 'fulfilled') {
+        resetAuthMessageState();
+        if (config.navigateUrl) {
+          navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+        }
+        if (config.toast) {
+          toast.success(config?.toast?.success);
+        }
+      }
+      if (res.meta.requestStatus === 'rejected') {
+        if (config?.toast) {
+          toast.error(config?.toast?.error);
+        }
+      }
+    });
+  };
+
+  /**
+   *
    * @param phoneNumber
    */
   const getPhoneConfirmationCode = async (phoneNumber: string) => {
+    dispatch(setIsPhoneLoadingState());
     const confirmation = await getPhoneConfirmationCodeService(phoneNumber);
+    dispatch(resetIsPhoneLoadingState());
     dispatch(setPhoneConfirmationState(confirmation));
   };
 
@@ -185,23 +214,39 @@ const useAuth = <TData = any>() => {
     });
   };
 
-  const signOut = async () => {
-    await signOutService().then(() => {
-      resetAuthState();
-    });
+  const signOut = async (config: { navigateUrl?: To; navigateOptions?: NavigateOptions | undefined; toast?: boolean }) => {
+    const data = await signOutService();
+    resetAuthState();
+    if (data.success) {
+      if (config.navigateUrl) {
+        navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+      }
+      if (config.toast) {
+        toast.success(data.message);
+      }
+    } else {
+      if (config.toast) {
+        toast.error(data.message);
+      }
+    }
   };
 
   /**
    *
    * @param config
    */
-  const updateEmail = async (config: { user: User; newEmail: string; toast?: boolean }) => {
+  const updateEmail = async (config: { user: User; newEmail: string; navigateUrl?: To; navigateOptions?: NavigateOptions | undefined; toast?: boolean }) => {
     const data = await updateEmailService({ user: config.user, newEmail: config.newEmail });
     dispatch(setMessageStateAction(data.message));
-    if (config.toast) {
-      if (data.succes) {
+    if (data.success) {
+      if (config.navigateUrl) {
+        navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+      }
+      if (config.toast) {
         toast.success(data.message);
-      } else {
+      }
+    } else {
+      if (config.toast) {
         toast.error(data.message);
       }
     }
@@ -211,13 +256,24 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const updatePassword = async (config: { user: User; newPassword: string; toast?: boolean }) => {
+  const updatePassword = async (config: {
+    user: User;
+    newPassword: string;
+    navigateUrl?: To;
+    navigateOptions?: NavigateOptions | undefined;
+    toast?: boolean;
+  }) => {
     const data = await updatePasswordService({ user: config.user, newPassword: config.newPassword });
     dispatch(setMessageStateAction(data.message));
-    if (config.toast) {
-      if (data.succes) {
+    if (data.success) {
+      if (config.navigateUrl) {
+        navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+      }
+      if (config.toast) {
         toast.success(data.message);
-      } else {
+      }
+    } else {
+      if (config.toast) {
         toast.error(data.message);
       }
     }
@@ -227,13 +283,24 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const sendPasswordResetEmail = async (config: { email: string; actionCodeSettings?: ActionCodeSettings | undefined; toast?: boolean }) => {
+  const sendPasswordResetEmail = async (config: {
+    email: string;
+    actionCodeSettings?: ActionCodeSettings | undefined;
+    navigateUrl?: To;
+    navigateOptions?: NavigateOptions | undefined;
+    toast?: boolean;
+  }) => {
     const data = await sendPasswordResetEmailService({ email: config.email, actionCodeSettings: config.actionCodeSettings });
     dispatch(setMessageStateAction(data.message));
-    if (config.toast) {
-      if (data.succes) {
+    if (data.success) {
+      if (config.navigateUrl) {
+        navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+      }
+      if (config.toast) {
         toast.success(data.message);
-      } else {
+      }
+    } else {
+      if (config.toast) {
         toast.error(data.message);
       }
     }
@@ -243,13 +310,24 @@ const useAuth = <TData = any>() => {
    *
    * @param config
    */
-  const sendEmailVerification = async (config: { user: User; actionCodeSettings?: ActionCodeSettings | undefined; toast?: boolean }) => {
+  const sendEmailVerification = async (config: {
+    user: User;
+    actionCodeSettings?: ActionCodeSettings | undefined;
+    navigateUrl?: To;
+    navigateOptions?: NavigateOptions | undefined;
+    toast?: boolean;
+  }) => {
     const data = await sendEmailVerificationService({ user: config.user, actionCodeSettings: config.actionCodeSettings });
     dispatch(setMessageStateAction(data.message));
-    if (config.toast) {
-      if (data.succes) {
+    if (data.success) {
+      if (config.navigateUrl) {
+        navigate(config.navigateUrl, { replace: true, ...config?.navigateOptions });
+      }
+      if (config.toast) {
         toast.success(data.message);
-      } else {
+      }
+    } else {
+      if (config.toast) {
         toast.error(data.message);
       }
     }
@@ -261,6 +339,7 @@ const useAuth = <TData = any>() => {
     resetAuthMessageState,
     refreshUser,
     signinWithGoogle,
+    signinWithApple,
     getPhoneConfirmationCode,
     signInWithPhoneNumber,
     signin,
@@ -274,6 +353,9 @@ const useAuth = <TData = any>() => {
     data: data as TData,
     isError,
     isLoading,
+    isGoogleLoading,
+    isAppleLoading,
+    isPhoneLoading,
     isSuccess,
     message,
     phoneConfirmation,

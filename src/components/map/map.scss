@@ -1,0 +1,14 @@
+.map-search {
+  position: absolute !important;
+  top: 10%;
+  left: 50%;
+  width: 40% !important;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+@media all and (max-width: 768px) {
+  .map-search {
+    width: 70% !important;
+  }
+}

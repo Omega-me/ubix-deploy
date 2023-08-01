@@ -131,7 +131,7 @@
   height: 80px;
   width: 80px;
   font-size: 40px;
-  background: rgba(25, 103, 210, 0.15);
+  background: var(--primary-3rd-color);
   color: var(--primary-color);
   border-radius: 50%;
   line-height: 80px;
@@ -244,8 +244,6 @@
   color: #d93025;
 }
 
-.applicants-widget .candidate-block-three {
-}
 
 .manage-job-table .job-block {
   margin-bottom: 0;

@@ -5,6 +5,7 @@ import {
   getUserDataService,
   signInWithEmailAndPasswordService,
   signinWithGoogleService,
+  signinWithAppleService,
   createUserWithEmailAndPasswordService,
   siginWithPhoneNumberService,
 } from 'services';
@@ -28,6 +29,20 @@ export const signinAction = createAsyncThunk(eAuthAction.AUTH_SIGNIN, async (log
 export const signinWithGoogleAction = createAsyncThunk(eAuthAction.AUTH_SIGNINWITHGOOGLE, async (_, thunkAPI) => {
   try {
     const user = await signinWithGoogleService();
+    if (user) {
+      const me = await getUserDataService(user);
+      return me;
+    }
+    return null;
+  } catch (error: any) {
+    const message = error?.response?.data?.message || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const signinWithAppleAction = createAsyncThunk(eAuthAction.AUTH_SIGNINWITHAPPLE, async (_, thunkAPI) => {
+  try {
+    const user = await signinWithAppleService();
     if (user) {
       const me = await getUserDataService(user);
       return me;

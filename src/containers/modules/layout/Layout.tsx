@@ -1,11 +1,13 @@
 import Aos from 'aos';
 import { toastOptions } from 'common/configs';
-import { ScrollToTop } from 'components';
+import { LoadingScreen, ScrollToTop } from 'components';
 import useTitle from 'hooks/useTitle';
 import React, { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { CreateProfileModalModule, FooterModule, NavbarModule } from 'containers/modules';
+import { FooterModule, NavbarModule } from 'containers/modules';
 import { useLocation } from 'react-router-dom';
+import { eRoutes } from 'common/enums';
+import useStore from 'hooks/useStore';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,8 +15,9 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { title } = useTitle();
+  const { lazyLoading } = useStore().globalState;
   const locations = useLocation();
-  const pathName = locations.pathname.split('/')[1].toLowerCase();
+  const pathName = locations.pathname;
 
   // Aos animation activation
   useEffect(() => {
@@ -30,14 +33,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [title]);
 
   return (
-    <div className="page-wrapper">
-      {pathName !== 'signup' && pathName !== 'login' && pathName !== 'forgotpassword' ? <NavbarModule /> : <NavbarModule isLoginPage={true} />}
-      {children}
-      <FooterModule />
-      <ScrollToTop />
-      <ToastContainer {...toastOptions} newestOnTop={true} />
-      <CreateProfileModalModule />
-    </div>
+    <>
+      {lazyLoading ? (
+        <div className="page-wrapper">
+          <LoadingScreen />
+        </div>
+      ) : (
+        <div className="page-wrapper">
+          {pathName !== eRoutes.SIGNUP &&
+          pathName !== eRoutes.LOGIN &&
+          pathName !== eRoutes.FORGOT_PASSWORD &&
+          pathName !== eRoutes.PHONE_LOGIN_REGISTER ? (
+            <NavbarModule />
+          ) : (
+            <NavbarModule isLoginPage={true} />
+          )}
+          {children}
+          {!pathName.startsWith(eRoutes.PROFILE) && <FooterModule />}
+          <ScrollToTop />
+          <ToastContainer {...toastOptions} newestOnTop={true} />
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,109 +1,60 @@
-import jobs from 'common/data/job-featured';
+import { JobDataDto } from 'common/interfaces';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import { Loading } from 'components';
+import noJobs from 'assets/images/no-jobs.png';
+import { eRoutes } from 'common/enums';
+interface FilterJobBoxProps {
+  jobsProps: {
+    jobs: JobDataDto[];
+    setPage: React.Dispatch<React.SetStateAction<number>>;
+    pages: number[];
+    page: number;
+    isLoading: boolean;
+  };
+}
 
-const FilterJobBox = () => {
-  const jobTypeList = [
-    {
-      id: 1,
-      name: 'Freelancer',
-      value: 'freelancer',
-      isChecked: false,
-    },
-    {
-      id: 2,
-      name: 'Full Time',
-      value: 'full-time',
-      isChecked: false,
-    },
-    {
-      id: 3,
-      name: 'Part Time',
-      value: 'part-time',
-      isChecked: false,
-    },
-    {
-      id: 4,
-      name: 'Temporary',
-      value: 'temporary',
-      isChecked: false,
-    },
-  ];
-  const datePost = [
-    { id: 1, name: 'All', value: 'all', isChecked: false },
-    { id: 2, name: 'Last Hour', value: 'last-hour', isChecked: false },
-    {
-      id: 3,
-      name: 'Last 24 Hour',
-      value: 'last-24-hour',
-      isChecked: false,
-    },
-    { id: 4, name: 'Last 7 Days', value: 'last-7-days', isChecked: false },
-    {
-      id: 5,
-      name: 'Last 14 Days',
-      value: 'last-14-days',
-      isChecked: false,
-    },
-    {
-      id: 6,
-      name: 'Last 30 Days',
-      value: 'last-30-days',
-      isChecked: false,
-    },
-  ];
-  const experienceLavel = [
-    { id: 1, name: 'Fresh', value: 'fresh', isChecked: false },
-    { id: 2, name: '1 Year', value: '1-year', isChecked: false },
-    { id: 3, name: '2 Year', value: '2-year', isChecked: false },
-    { id: 4, name: '3 Year', value: '3-year', isChecked: false },
-    {
-      id: 5,
-      name: '4 Year',
-      value: '4-year',
-      isChecked: false,
-    },
-  ];
-
-  const content = jobs?.map((item) => (
+const FilterJobBox: React.FC<FilterJobBoxProps> = (props) => {
+  const content = props?.jobsProps?.jobs?.map((item) => (
     <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
       <div className="inner-box">
         <div className="content">
           <span className="company-logo">
-            <img src={item.logo} alt="item brand" />
+            <img src={item?.profileImage as any} alt="item brand" />
           </span>
           <h4>
-            <Link to={`/job-single-v4/${item.id}`}>{item.jobTitle}</Link>
+            <Link to={`${eRoutes.JOBLISTING}/${item.name}?id=${item.id}`}>{item?.name}</Link>
           </h4>
 
           <ul className="job-info">
             <li>
               <span className="icon flaticon-briefcase"></span>
-              {item.company}
+              {item.fullName}
             </li>
             {/* compnay info */}
             <li>
               <span className="icon flaticon-map-locator"></span>
-              {item.location}
+              {item.address}
             </li>
             {/* location info */}
             <li>
-              <span className="icon flaticon-clock-3"></span> {item.time}
+              <span className="icon flaticon-clock-3"></span> {moment(item.createdAt).format('MMM Do YY')}
             </li>
             {/* time info */}
             <li>
-              <span className="icon flaticon-money"></span> {item.salary}
+              <span className="icon flaticon-money"></span> £{item.salary}
             </li>
             {/* salary info */}
           </ul>
           {/* End .job-info */}
 
-          <ul className="job-other-info">
+          {/* <ul className="job-other-info">
             {item?.jobType?.map((val, i) => (
               <li key={i} className={`${val.styleClass}`}>
                 {val.type}
               </li>
             ))}
-          </ul>
+          </ul> */}
           {/* End .job-other-info */}
 
           <button className="bookmark-btn">
@@ -117,7 +68,7 @@ const FilterJobBox = () => {
 
   return (
     <>
-      <div className="ls-switcher">
+      {/* <div className="ls-switcher">
         <div className="showing-result">
           <div className="top-filters">
             <div className="form-group">
@@ -130,18 +81,16 @@ const FilterJobBox = () => {
                 ))}
               </select>
             </div>
-            {/* End job type filter */}
 
             <div className="form-group">
               <select className="chosen-single form-select">
-                {datePost?.map((item: any) => (
+                {rating?.map((item: any) => (
                   <option value={item.value} key={item.id}>
                     {item.name}
                   </option>
                 ))}
               </select>
             </div>
-            {/* End date posted filter */}
 
             <div className="form-group">
               <select className="chosen-single form-select">
@@ -153,7 +102,6 @@ const FilterJobBox = () => {
                 ))}
               </select>
             </div>
-            {/* End ecperience level filter */}
 
             <div className="form-group">
               <select className="chosen-single form-select">
@@ -199,12 +147,10 @@ const FilterJobBox = () => {
                 </option>
               </select>
             </div>
-            {/* End salary estimate filter */}
           </div>
         </div>
-        {/* End .showing-result */}
 
-        <div className="sort-by">
+        /* <div className="sort-by">
           <button className="btn btn-danger text-nowrap me-2" style={{ minHeight: '45px', marginBottom: '15px' }}>
             Clear All
           </button>
@@ -214,7 +160,6 @@ const FilterJobBox = () => {
             <option value="asc">Newest</option>
             <option value="des">Oldest</option>
           </select>
-          {/* End select */}
 
           <select className="chosen-single form-select ms-3 ">
             <option
@@ -250,40 +195,56 @@ const FilterJobBox = () => {
               30 per page
             </option>
           </select>
-          {/* End select */}
-        </div>
-        {/* End sort by filter */}
-      </div>
-      {/* <!-- ls Switcher --> */}
+        </div> *'/
+      </div> */}
 
-      <div className="row">{content}</div>
+      <div className="row">
+        {props?.jobsProps?.isLoading ? (
+          <Loading />
+        ) : props?.jobsProps?.jobs?.length > 0 ? (
+          content
+        ) : (
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+            <img src={noJobs} alt="No jobs foound!" />
+            <div>There are no available job openings. However, we encourage you to check notifications when new job openings become available.</div>
+          </div>
+        )}
+      </div>
       {/* End .row with jobs */}
 
-      <nav className="ls-pagination">
-        <ul>
-          <li className="prev">
-            <a href="#">
-              <i className="fa fa-arrow-left"></i>
-            </a>
-          </li>
-          <li>
-            <a href="#">1</a>
-          </li>
-          <li>
-            <a href="#" className="current-page">
-              2
-            </a>
-          </li>
-          <li>
-            <a href="#">3</a>
-          </li>
-          <li className="next">
-            <a href="#">
-              <i className="fa fa-arrow-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      {props?.jobsProps?.jobs?.length > 0 && (
+        <nav className="ls-pagination">
+          <ul>
+            {props?.jobsProps?.pages?.length >= 2 && props?.jobsProps?.page !== 1 && (
+              <>
+                <li className="prev" onClick={() => props?.jobsProps?.setPage(props?.jobsProps?.page - 1)}>
+                  <a>
+                    <i className="fa fa-arrow-left"></i>
+                  </a>
+                </li>
+                <li onClick={() => props?.jobsProps?.setPage(props?.jobsProps?.page - 1)}>
+                  <a>{props?.jobsProps?.page - 1}</a>
+                </li>
+              </>
+            )}
+            <li>
+              <a className="current-page">{props?.jobsProps?.page}</a>
+            </li>
+            {props?.jobsProps?.pages?.length <= 2 && props?.jobsProps?.page !== props?.jobsProps.pages?.length && (
+              <>
+                <li onClick={() => props?.jobsProps?.setPage(props?.jobsProps?.page + 1)}>
+                  <a>{props?.jobsProps?.page + 1}</a>
+                </li>
+                <li className="next" onClick={() => props?.jobsProps?.setPage(props?.jobsProps?.page + 1)}>
+                  <a>
+                    <i className="fa fa-arrow-right"></i>
+                  </a>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
+      )}
       {/* <!-- End Pagination --> */}
     </>
   );

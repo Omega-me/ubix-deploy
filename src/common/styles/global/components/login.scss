@@ -368,6 +368,34 @@ Login Section
   position: relative;
 }
 
+.social-btn-one{
+  position: relative;
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+    border-radius: 8px;
+    background-color: var(--primary-3rd-color);
+    border: 1px solid var(--primary-3rd-color);
+    font-weight: 500;
+    padding: 10px 30px;
+    color: var(--primary-color);
+    line-height: 25px;
+    margin-bottom: 20px;
+
+    &:hover{
+      background-color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      color: var(--primary-3rd-color);
+    }
+}
+
+.social-btn-one i {
+  margin-right: 10px;
+  font-size: 15px;
+}
+
 .social-btn-two {
   position: relative;
   display: block;
@@ -391,6 +419,34 @@ Login Section
   font-size: 15px;
 }
 
+.social-btn-three {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 14px;
+  border-radius: 8px;
+  background-color: var(--primary-2nd-color);
+  border: 1px solid var(--primary-2nd-color);
+  font-weight: 500;
+  padding: 10px 30px;
+  color: white;
+  line-height: 25px;
+  margin-bottom: 20px;
+
+  &:hover {
+    background-color: white;
+    border: 1px solid var(--primary-2nd-color);
+    color: var(--primary-2nd-color);
+  }
+}
+
+.social-btn-three i {
+  margin-right: 10px;
+  font-size: 15px;
+}
+
 .social-btn-two.facebook-btn {
   border-color: #3b5998;
   color: #3b5998;
@@ -406,8 +462,18 @@ Login Section
   color: #dc4d28;
 }
 
+.social-btn-two.apple-btn {
+  border-color: black;
+  color: black;
+}
+
 .social-btn-two.google-btn:hover {
   background-color: #dc4d28;
+  color: #ffffff;
+}
+
+.social-btn-two.apple-btn:hover {
+  background-color: black;
   color: #ffffff;
 }
 

@@ -1,3 +1,4 @@
-export interface IGlobalState{
-    title:string;   
+export interface IGlobalState {
+  title: string;
+  lazyLoading: boolean;
 }

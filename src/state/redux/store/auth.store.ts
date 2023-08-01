@@ -8,6 +8,9 @@ const initialState: IStateThunk<UserDataDto> = {
   data: null,
   isError: false,
   isLoading: false,
+  isGoogleLoading: false,
+  isAppleLoading: false,
+  isPhoneLoading: false,
   isSuccess: false,
   message: '',
   phoneConfirmation: null,
@@ -35,12 +38,26 @@ const authSlice = createSlice({
     resetPhoneConfirmationState: state => {
       new AuthReducer({ state }).resetPhoneConfirmation();
     },
+    setIsPhoneLoadingState: state => {
+      new AuthReducer({ state }).setIsPhoneLoading();
+    },
+    resetIsPhoneLoadingState: state => {
+      new AuthReducer({ state }).resetIsPhoneLoading();
+    },
   },
   extraReducers: (builder: ActionReducerMapBuilder<any>) => {
     new AuthReducer({ builder }).buildExtraReducers();
   },
 });
 
-export const { resetAuthState, setMessageState, resetAuthMessageState, initializeUserState, setPhoneConfirmationState, resetPhoneConfirmationState } =
-  authSlice.actions;
+export const {
+  resetAuthState,
+  setMessageState,
+  resetAuthMessageState,
+  initializeUserState,
+  setPhoneConfirmationState,
+  resetPhoneConfirmationState,
+  setIsPhoneLoadingState,
+  resetIsPhoneLoadingState,
+} = authSlice.actions;
 export default authSlice.reducer;

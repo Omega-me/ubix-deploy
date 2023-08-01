@@ -1,4 +1,5 @@
 export enum eQueryKeys {
   USERS = 'users',
-  JOBS = 'jobs'
+  JOBS = 'jobs',
+  EXPERIENCES = 'experiences'
 }

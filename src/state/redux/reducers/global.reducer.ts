@@ -13,4 +13,8 @@ export class GlobalReducer<T = any> {
   setTitle() {
     this._state.title = this._payload as string;
   }
+
+  setLazyLoading() {
+    this._state.lazyLoading = this._payload as boolean;
+  }
 }

@@ -1,3 +1,4 @@
+import { eRoutes } from 'common/enums';
 import { AuthData, UserDataDto } from 'common/interfaces';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -5,7 +6,8 @@ import { Link } from 'react-router-dom';
 interface SidebarFooterProps {
   isLoginPage?: boolean;
   userData: AuthData<UserDataDto>;
-  signOut: () => Promise<void>;
+  pathName: string;
+  onLogOut: () => void;
 }
 
 const SidebarFooter: React.FC<SidebarFooterProps> = props => {
@@ -21,13 +23,17 @@ const SidebarFooter: React.FC<SidebarFooterProps> = props => {
       return null;
     }
 
+    if (props.pathName.startsWith(eRoutes.PROFILE)) {
+      return null;
+    }
+
     if (props.userData) {
       return (
         <>
-          <Link to="/profile" className="theme-btn btn-style-one mm-listitem__text">
+          <Link to={eRoutes.PROFILE} className="theme-btn btn-style-one mm-listitem__text">
             Go to profile
           </Link>
-          <button onClick={props.signOut} className="theme-btn btn-style-two mm-listitem__text my-3">
+          <button onClick={props.onLogOut} className="theme-btn btn-style-two mm-listitem__text my-3">
             Logout
           </button>
         </>
@@ -36,7 +42,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = props => {
 
     return (
       <>
-        <Link to="/login" className="theme-btn btn-style-one mm-listitem__text">
+        <Link to={eRoutes.LOGIN} className="theme-btn btn-style-one mm-listitem__text">
           Login / Register
         </Link>
       </>

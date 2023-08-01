@@ -5,28 +5,34 @@ import { Menu, MenuItem, ProSidebarProvider, Sidebar, SubMenu } from 'react-pro-
 import { Link } from 'react-router-dom';
 import logo from 'assets/images/logo.svg';
 import { AuthData, UserDataDto } from 'common/interfaces';
+import { eRoutes } from 'common/enums';
+import { PROFILE } from 'common/labels';
 
 interface HeaderProps {
   navbar: boolean;
   isLoginPage?: boolean;
   userData: AuthData<UserDataDto>;
-  signOut: () => Promise<void>;
+  pathName: string;
+  onLogOut: () => void;
 }
 
 const Navbar: React.FC<HeaderProps> = props => {
-  const pathName = location.pathname.split('/')[1];
   const renderButtons = () => {
     if (props.isLoginPage) {
+      return null;
+    }
+
+    if (props.pathName.startsWith(eRoutes.PROFILE)) {
       return null;
     }
 
     if (props.userData) {
       return (
         <>
-          <Link to="/profile" className="theme-btn btn-style-three">
+          <Link to={eRoutes.PROFILE} className="theme-btn btn-style-three">
             Go to profile
           </Link>
-          <button onClick={props.signOut} className="theme-btn btn-style-one mx-3">
+          <button onClick={props.onLogOut} className="theme-btn btn-style-one mx-3">
             Logout
           </button>
         </>
@@ -35,7 +41,7 @@ const Navbar: React.FC<HeaderProps> = props => {
 
     return (
       <>
-        <Link to="/login" className="theme-btn btn-style-three">
+        <Link to={eRoutes.LOGIN} className="theme-btn btn-style-three">
           Login / Register
         </Link>
       </>
@@ -43,14 +49,13 @@ const Navbar: React.FC<HeaderProps> = props => {
   };
   return (
     <>
-      {/* Navbar */}
       <header
         className={`main-header ${
           props.isLoginPage
             ? 'fixed-header'
-            : props.navbar && pathName !== 'profile'
+            : props.navbar && !props.pathName.startsWith(eRoutes.PROFILE)
             ? 'fixed-header animated slideInDown'
-            : pathName === 'profile'
+            : props.pathName.startsWith(eRoutes.PROFILE)
             ? 'fixed-header header-shaddow'
             : ''
         }`}
@@ -59,7 +64,7 @@ const Navbar: React.FC<HeaderProps> = props => {
           <div className="nav-outer">
             <div className="logo-box">
               <div className="logo">
-                <Link to="/">
+                <Link to={eRoutes.HOME}>
                   <img src={logo} alt="brand" />
                 </Link>
               </div>
@@ -74,35 +79,27 @@ const Navbar: React.FC<HeaderProps> = props => {
         </div>
       </header>
 
-      {/* Navbar Mobile*/}
       <header className="main-header main-header-mobile">
         <div className="auto-container">
-          {/* <!-- Main box --> */}
           <div className="inner-box">
             <div className="nav-outer">
               <div className="logo-box">
                 <div className="logo">
-                  <Link to="/">
+                  <Link to={eRoutes.HOME}>
                     <img src={logo} alt="brand" />
                   </Link>
                 </div>
               </div>
-              {/* End .logo-box */}
               <div className="offcanvas offcanvas-start mobile_menu-contnet" tabIndex={-1} id="offcanvasMenu" data-bs-scroll="true">
                 <SidebarHeader />
-                {/* End pro-header */}
                 <ProSidebarProvider>
                   <Sidebar>
                     <Menu>
                       {mobileMenuData.map((item) => (
-                        <SubMenu
-                          className={isActiveParentChaild(item.items, location.pathname) ? 'menu-active' : ''}
-                          label={item.label}
-                          key={item.id}
-                        >
+                        <SubMenu className={isActiveParentChaild(item.items, props.pathName) ? 'menu-active' : ''} label={item.label} key={item.id}>
                           {item.items.map((menuItem, i) => (
                             <MenuItem
-                              className={isActiveLink(menuItem.routePath, location.pathname) ? 'menu-active-link' : ''}
+                              className={isActiveLink(menuItem.routePath, props.pathName) ? 'menu-active-link' : ''}
                               key={i}
                               routerLink={<Link to={menuItem.routePath} />}
                             >
@@ -114,25 +111,14 @@ const Navbar: React.FC<HeaderProps> = props => {
                     </Menu>
                   </Sidebar>
                 </ProSidebarProvider>
-                <SidebarFooter signOut={props.signOut} userData={props.userData} isLoginPage={props.isLoginPage} />
+                <SidebarFooter pathName={props.pathName} onLogOut={props.onLogOut} userData={props.userData} isLoginPage={props.isLoginPage} />
               </div>
-
-              {/* <!-- Main Menu End--> */}
             </div>
-            {/* End .nav-outer */}
 
             <div className="outer-box">
-              <div className="login-box">
-                <a href="#" className="call-modal" data-bs-toggle="modal" data-bs-target="#loginPopupModal">
-                  <span className="icon icon-user"></span>
-                </a>
-              </div>
-              {/* login popup end */}
-
               <a href="#" className="mobile-nav-toggler" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
                 <span className="flaticon-menu-1"></span>
               </a>
-              {/* right humberger menu */}
             </div>
           </div>
         </div>

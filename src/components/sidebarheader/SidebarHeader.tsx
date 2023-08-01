@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import logo from 'assets/images/logo.svg';
+import { eRoutes } from 'common/enums';
 
 const SidebarHeader = () => {
   return (
     <div className="pro-header">
-      <Link to="/">
+      <Link to={eRoutes.HOME}>
         <img src={logo} alt="brand" />
       </Link>
       {/* End logo */}
