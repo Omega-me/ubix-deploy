@@ -238,7 +238,7 @@ const Profile: React.FC<ProfileProps> = props => {
                       ) : (
                         <div className="form-group col-lg-6 col-md-12">
                           <button type="submit" className="theme-btn btn-style-one" onClick={profile.onHandleUpdateProfile}>
-                            {LABELS.SAVE_CHANGES}
+                            {profile.isUpdateUserLoading ? <Loading size="sm" button={true} /> : LABELS.SAVE_CHANGES}
                           </button>
                         </div>
                       )}
@@ -401,11 +401,7 @@ const Profile: React.FC<ProfileProps> = props => {
                         </div>
                       ) : (
                         <div className="form-group col-lg-6 col-md-12">
-                          <button
-                            type="submit"
-                            className="theme-btn btn-style-one"
-                            onClick={profile.onSendEmailVerification}
-                            disabled={!userData?.emailVerified}>
+                          <button type="submit" className="theme-btn btn-style-one" onClick={profile.onHandleCreateProfile}>
                             {profile.isCreateUserLoading ? <Loading button={true} size="sm" /> : LABELS.CREATE_PROFILE}
                           </button>
                         </div>

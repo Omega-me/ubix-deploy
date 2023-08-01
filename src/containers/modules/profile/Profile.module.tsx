@@ -1,14 +1,16 @@
-import { eApiRoutes, eHttpMethod } from 'common/enums';
+import { eApiRoutes, eHttpMethod, eRoutes } from 'common/enums';
 import { AuthData, CreateUserDto, UserDataDto } from 'common/interfaces';
 import { getErrorMessage } from 'common/utils';
 import { Profile } from 'components';
 import { useUserMutation } from 'hooks';
 import useAuth from 'hooks/useAuth';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const ProfileModule = () => {
   const { data: userData, sendEmailVerification, getUser } = useAuth<AuthData<UserDataDto>>();
+  const navigate = useNavigate();
 
   const {
     register: registerCreateProfile,
@@ -16,7 +18,12 @@ const ProfileModule = () => {
     reset: resetCreateProfileFields,
     formState: { errors: createProfileErrors },
     clearErrors: clearCreateProfileErrors,
-  } = useForm<CreateUserDto>();
+  } = useForm<CreateUserDto>({
+    defaultValues: {
+      email: userData?.email,
+      phoneNumber: userData?.phone,
+    },
+  });
 
   const {
     register: registerUpdateProfile,
@@ -41,6 +48,7 @@ const ProfileModule = () => {
         onSuccessFn: () => {
           resetCreateProfileFields();
           clearCreateProfileErrors();
+          navigate(eRoutes.PROFILE);
         },
         onError(error) {
           toast.error(getErrorMessage(error));
@@ -59,6 +67,7 @@ const ProfileModule = () => {
         onSuccessFn: () => {
           resetUpdateProfileFields();
           clearUpdateProfileErrors();
+          navigate(eRoutes.PROFILE);
         },
         onError(error) {
           toast.error(getErrorMessage(error));
@@ -74,12 +83,13 @@ const ProfileModule = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onHandleUpdateProfile = handleUpdateProfile((data: UserDataDto | any) => {
     delete data.profile;
-    const filterData = Object.keys(data).map(key => {
-      if (data[key] === undefined || data[key] === '') {
+    Object.keys(data).map(key => {
+      if (data[key] === undefined || data[key] === null || data[key] === '') {
         delete data[key];
       }
     });
-    updateUser(filterData);
+
+    updateUser(data);
   });
 
   return (
