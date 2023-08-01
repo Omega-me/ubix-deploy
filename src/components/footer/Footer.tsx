@@ -9,7 +9,7 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = (props) => {
   const { footerStyle } = props;
   return (
-    <footer className={`main-footer ${footerStyle}`}>
+    <footer className={`main-footer ${footerStyle}`} style={{ zIndex: 99 }}>
       <div className="auto-container">
         {/* <!--Widgets Section--> */}
         <div className="widgets-section" data-aos="fade-up">

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt_decode from 'jwt-decode';
 import { auth } from 'common/configs';
-import { eApiRoutes, eHttpMethod } from 'common/enums';
+import { eApiRoutes, eHttpMethod, eSigninProvider } from 'common/enums';
 import { AuthData, LoginUserDto, SignupUserDto, UserDataDto } from 'common/interfaces';
 import {
   ActionCodeSettings,
@@ -17,6 +18,9 @@ import {
   updatePassword,
   GoogleAuthProvider,
   signInWithPopup,
+  OAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth';
 import { httpClient } from 'services';
 import {
@@ -33,6 +37,7 @@ import {
 } from 'common/labels';
 
 const provider = new GoogleAuthProvider();
+const appleProvider = new OAuthProvider('apple.com');
 
 /**
  *
@@ -40,10 +45,27 @@ const provider = new GoogleAuthProvider();
  */
 export const getUserDataService = async (user: User) => {
   const token = await user.getIdToken();
-  const decoded: { email_verified: boolean } = jwt_decode(token);
+  const decoded: {
+    email_verified: boolean;
+    phone_number: string;
+    email: string;
+    picture: string;
+    firebase: {
+      sign_in_provider: string;
+    };
+  } = jwt_decode(token);
+
+  const authData = {
+    token,
+    emailVerified: decoded.email_verified,
+    signinProvider: decoded?.firebase.sign_in_provider as eSigninProvider,
+    email: decoded.email,
+    phone: decoded.phone_number,
+    picture: decoded.picture,
+  };
 
   try {
-    const res = await httpClient(eHttpMethod.GET, eApiRoutes.SELF, {
+    const res = await httpClient(eHttpMethod.GET, eApiRoutes.USERS+eApiRoutes.SELF, {
       axiosConfig: {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,18 +73,24 @@ export const getUserDataService = async (user: User) => {
       },
     });
     const data: AuthData<UserDataDto> = {
-      user: res,
-      token,
-      emailVerified: decoded.email_verified,
+      user: {
+        profile: true,
+        ...res,
+      },
+      ...authData,
     };
     return data;
-  } catch (error) {
-    const data: AuthData<UserDataDto> = {
-      user: null,
-      token,
-      emailVerified: decoded.email_verified,
-    };
-    return data;
+  } catch (error: any) {
+    if (error && error.response && error.response.status === 404) {
+      const data: AuthData<{ profile: boolean }> = {
+        user: {
+          profile: false,
+        },
+        ...authData,
+      };
+      return data;
+    }
+    return null;
   }
 };
 
@@ -83,6 +111,16 @@ export const signInWithEmailAndPasswordService = async (data: LoginUserDto) => {
 export const signinWithGoogleService = async () => {
   const res = await signInWithPopup(auth, provider);
   return res.user;
+};
+
+/**
+ *
+ * @returns
+ */
+export const signinWithAppleService = async () => {
+  const redirectRes = await signInWithRedirect(auth, appleProvider);
+  const res = await getRedirectResult(redirectRes);
+  return res?.user;
 };
 
 /**
@@ -124,9 +162,15 @@ export const createUserWithEmailAndPasswordService = async (data: SignupUserDto)
 export const updateEmailService = async (data: { user: User; newEmail: string }) => {
   try {
     await updateEmail(data.user, data.newEmail);
-    return YOUR_EMAIL_WAS_CHANGED_SUCCESSFULLY;
+    return {
+      success: true,
+      message: YOUR_EMAIL_WAS_CHANGED_SUCCESSFULLY,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_UPDATING_YOUR_EMAIL;
+    return {
+      success: false,
+      message: THERE_WAS_A_PROBLEM_UPDATING_YOUR_EMAIL,
+    };
   }
 };
 
@@ -138,9 +182,15 @@ export const updateEmailService = async (data: { user: User; newEmail: string })
 export const updatePasswordService = async (data: { user: User; newPassword: string }) => {
   try {
     await updatePassword(data.user, data.newPassword);
-    return YOUR_PASSSWORD_WAS_CHANGED_SUCCESSFULLY;
+    return {
+      success: true,
+      message: YOUR_PASSSWORD_WAS_CHANGED_SUCCESSFULLY,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_UPDATING_YOUR_PASSWORD;
+    return {
+      success: false,
+      message: THERE_WAS_A_PROBLEM_UPDATING_YOUR_PASSWORD,
+    };
   }
 };
 
@@ -152,9 +202,15 @@ export const updatePasswordService = async (data: { user: User; newPassword: str
 export const sendPasswordResetEmailService = async (data: { email: string; actionCodeSettings?: ActionCodeSettings | undefined }) => {
   try {
     await sendPasswordResetEmail(auth, data.email, data.actionCodeSettings);
-    return A_PASSWORD_RESET_LINK_WAS_SEND_TO_YOUR_EMAIL_ADDRESS;
+    return {
+      success: true,
+      message: A_PASSWORD_RESET_LINK_WAS_SEND_TO_YOUR_EMAIL_ADDRESS,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_SENDING_PASSWORD_RESET_EMAIL;
+    return {
+      success: false,
+      message: THERE_WAS_A_PROBLEM_SENDING_PASSWORD_RESET_EMAIL,
+    };
   }
 };
 
@@ -166,9 +222,15 @@ export const sendPasswordResetEmailService = async (data: { email: string; actio
 export const sendEmailVerificationService = async (data: { user: User; actionCodeSettings?: ActionCodeSettings | null | undefined }) => {
   try {
     await sendEmailVerification(data.user, data.actionCodeSettings);
-    return AN_EMAIL_VERIFICATION_LINK_WAS_SENT_TO_YOUR_EMAIL_ACCOUNT;
+    return {
+      success: true,
+      message: AN_EMAIL_VERIFICATION_LINK_WAS_SENT_TO_YOUR_EMAIL_ACCOUNT,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_SENDING_EMAIL_VERFICATION;
+    return {
+      success: false,
+      message: THERE_WAS_A_PROBLEM_SENDING_EMAIL_VERFICATION,
+    };
   }
 };
 
@@ -179,9 +241,15 @@ export const sendEmailVerificationService = async (data: { user: User; actionCod
 export const signOutService = async () => {
   try {
     await signOut(auth);
-    return USER_HAS_BEEN_SUCCESSFULLY_LOGGED_OUT;
+    return {
+      success: true,
+      message: USER_HAS_BEEN_SUCCESSFULLY_LOGGED_OUT,
+    };
   } catch (error) {
-    return THERE_WAS_A_PROBLEM_LOGGING_THE_USER_OUT;
+    return {
+      success: false,
+      message: THERE_WAS_A_PROBLEM_LOGGING_THE_USER_OUT,
+    };
   }
 };
 

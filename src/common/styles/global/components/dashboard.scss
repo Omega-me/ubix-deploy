@@ -33,7 +33,7 @@
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-bottom: 8px solid #ecedf2;
-  content: "";
+  content: '';
 }
 
 .dashboard-option .dropdown-toggle {
@@ -48,8 +48,8 @@
 
 .dashboard-option .dropdown-toggle::after {
   margin-left: 12px;
-  content: "\f107";
-  font-family: "Font Awesome 5 Free";
+  content: '\f107';
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   border: 0;
 }
@@ -205,7 +205,7 @@
 }
 
 .mm-wrapper_opened .mobile-nav-toggler .flaticon-menu-1:before {
-  content: "\f175";
+  content: '\f175';
   font-size: 18px;
   line-height: 30px;
   display: block;
@@ -306,7 +306,7 @@ Dashboard
 
 .dashboard {
   position: relative;
-  background-color: #f5f7fc;
+  background-color: var(--page-color);
   padding-left: 365px;
   min-height: 100vh;
 }
@@ -563,8 +563,8 @@ Listing Filters
   align-items: center;
 }
 
-.search-form input[type="text"],
-.search-form input[type="search"] {
+.search-form input[type='text'],
+.search-form input[type='search'] {
   position: relative;
   height: 54px;
   min-width: 305px;
@@ -717,7 +717,7 @@ Listing Block Seven
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#1b2032',GradientType=0 );
   z-index: 1;
   opacity: 0.8;
-  content: "";
+  content: '';
 }
 
 .listing-block-seven .inner-box:hover .image img {
@@ -1004,7 +1004,7 @@ User Sidebar
 .user-sidebar .navigation > li.active > a,
 .user-sidebar .navigation > li:hover > a {
   color: var(--primary-color);
-  background: rgba(25, 103, 210, 0.1);
+  background: var(--primary-3rd-color);
 }
 
 .user-sidebar .navigation li.active a i,
@@ -1093,7 +1093,7 @@ User Sidebar
   height: 234px;
   width: 234px;
   border: 30px solid #ecedf2;
-  content: "";
+  content: '';
   border-radius: 50%;
   z-index: -1;
   -webkit-transform: scale(0.9);
@@ -1120,8 +1120,8 @@ Chat Widget
   border: 0;
 }
 
-.chat-widget .search-box-one .form-group input[type="text"],
-.chat-widget .search-box-one .form-group input[type="search"] {
+.chat-widget .search-box-one .form-group input[type='text'],
+.chat-widget .search-box-one .form-group input[type='search'] {
   width: 100%;
 }
 
@@ -1549,7 +1549,7 @@ Chat Widget
 }
 
 .active-chat-contacts .toggle-contact .fa-bars:before {
-  content: "\f00d";
+  content: '\f00d';
 }
 
 .ls-widget {
@@ -1623,8 +1623,8 @@ Chat Widget
 
 .widget-title .chosen-container-single .chosen-single div:after {
   color: #696969;
-  content: "\f17c";
-  font-family: "Flaticon";
+  content: '\f17c';
+  font-family: 'Flaticon';
   font-size: 10px;
 }
 
@@ -1637,8 +1637,8 @@ Chat Widget
   margin-bottom: 0;
 }
 
-.search-box-one .form-group input[type="text"],
-.search-box-one .form-group input[type="search"] {
+.search-box-one .form-group input[type='text'],
+.search-box-one .form-group input[type='search'] {
   position: relative;
   display: block;
   max-width: 100%;
@@ -1656,8 +1656,8 @@ Chat Widget
   transition: all 500ms ease;
 }
 
-.search-box-one .form-group input[type="text"]:focus,
-.search-box-one .form-group input[type="search"]:focus {
+.search-box-one .form-group input[type='text']:focus,
+.search-box-one .form-group input[type='search']:focus {
   border-color: var(--primary-color);
 }
 

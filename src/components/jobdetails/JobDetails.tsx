@@ -1,14 +1,17 @@
+import { Link } from 'react-router-dom';
 import jobs from 'common/data/job-featured';
-import { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import { JobDetailsSidebar } from 'components';
+import { JobDetailDataDto } from 'common/interfaces';
+import { Map } from 'components';
+import moment from 'moment';
+import maleAvatar from 'assets/images/maleAvatar.png';
+import { CHOOSE_YOUR_LOCATION } from 'common/labels';
 
-const JobDetails = () => {
-  const [company, setCompany] = useState<any>({});
-  const location = useLocation();
-  const { slug } = useParams();
-  const id = location?.search.split('=')[1];
+interface JobDetailsProps {
+  jobData: JobDetailDataDto;
+}
 
+const JobDetails: React.FC<JobDetailsProps> = (props) => {
+  const { jobData } = props;
   const socialContent = [
     {
       id: 1,
@@ -33,219 +36,252 @@ const JobDetails = () => {
     },
   ];
 
-  useEffect(() => {
-    if (!id) <h1>Loading...</h1>;
-    else setCompany(jobs.find((item: any) => item.id == id) as any);
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return () => {};
-  }, [id]);
-
   return (
-    <>
-      {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
-      {/* <!-- Job Detail Section --> */}
-      <section className="job-detail-section">
-        <div className="job-detail-outer">
-          <div className="auto-container">
-            <div className="row">
-              <div className="content-column col-lg-8 col-md-12 col-sm-12">
-                <div className="job-block-outer">
-                  <div className="job-block-seven style-two">
+    <section className="job-detail-section style-three">
+      <div className="upper-box">
+        <div className="auto-container">
+          <div className="job-block-seven style-three">
+            <div className="inner-box">
+              <div className="content">
+                <span className="company-logo">
+                  <img src={jobData?.creatorProfileImage ? jobData?.creatorProfileImage : maleAvatar} alt="logo" />
+                </span>
+                <h4>{jobData?.name}</h4>
+
+                <ul className="job-info">
+                  <li>
+                    <span className="icon flaticon-briefcase"></span>
+                    {jobData?.companyName}
+                  </li>
+                  {/* compnay info */}
+                  <li>
+                    <span className="icon flaticon-map-locator"></span>
+                    {jobData?.address}, {jobData?.country}
+                  </li>
+                  {/* location info */}
+                  <li>
+                    <span className="icon flaticon-clock-3"></span> {moment(jobData?.createdAt).format('MMM Do YY')}
+                  </li>
+                  {/* time info */}
+                  <li>
+                    <span className="icon flaticon-money"></span> £{jobData?.salary}
+                  </li>
+                  {/* salary info */}
+                </ul>
+                {/* End .job-info */}
+
+                <ul className="job-other-info">
+                  {jobData?.tags?.map((val: string, i: number) => (
+                    <li key={i} className={`time`}>
+                      {val}
+                    </li>
+                  ))}
+                </ul>
+                {/* End .job-other-info */}
+              </div>
+              {/* End .content */}
+
+              <div className="btn-box">
+                <a href="#" className="theme-btn btn-style-one" data-bs-toggle="modal" data-bs-target="#applyJobModal">
+                  Apply For Job
+                </a>
+                {/* <button className="bookmark-btn">
+                  <i className="flaticon-bookmark"></i>
+                </button> */}
+              </div>
+              {/* End apply for job btn */}
+
+              {/* <!-- Modal --> */}
+              {/* <div className="modal fade" id="applyJobModal" tabIndex={-1} aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                  <div className="apply-modal-content modal-content">
+                    <div className="text-center">
+                      <h3 className="title">Apply for this job</h3>
+                      <button type="button" className="closed-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <ApplyJobModalContent />
+
+                    <form className="default-form job-apply-form">
+                      <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                          <div className="uploading-outer apply-cv-outer">
+                            <div className="uploadButton">
+                              <input
+                                className="uploadButton-input"
+                                type="file"
+                                name="attachments[]"
+                                accept="image/*, application/pdf"
+                                id="upload"
+                                multiple
+                                required
+                              />
+                              <label className="uploadButton-button ripple-effect" htmlFor="upload">
+                                Upload CV (doc, docx, pdf)
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                          <textarea className="darma" name="message" placeholder="Message" required></textarea>
+                        </div>
+
+                        <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                          <div className="input-group checkboxes square">
+                            <input type="checkbox" name="remember-me" id="rememberMe" />
+                            <label htmlFor="rememberMe" className="remember">
+                              <span className="custom-checkbox"></span> You accept our{' '}
+                              <span data-bs-dismiss="modal">
+                                <Link to="/terms">Terms and Conditions and Privacy Policy</Link>
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                          <button className="theme-btn btn-style-one w-100" type="submit" name="submit-form">
+                            Apply Job
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="job-detail-outer">
+        <div className="auto-container">
+          <div className="row">
+            <div className="content-column col-lg-8 offset-2 col-md-12 col-sm-12">
+              {/* <JobDetailsDescriptions /> */}
+              <div className="job-detail">
+                <h4>Job Description</h4>
+                <p>{jobData?.description}</p>
+                <h4>Key Responsibilities</h4>
+                {/* <ul className="list-style-three">
+                  <li>{jobData?.requirements}</li>
+                </ul> */}
+                <p>{jobData?.requirements}</p>
+
+                {/* <h4>Skill & Experience</h4>
+                <ul className="list-style-three">
+                  <li>You have at least 3 years’ experience working as a Product Designer.</li>
+                  <li>You have experience using Sketch and InVision or Framer X</li>
+                  <li>You have some previous experience working in an agile environment – Think two-week sprints.</li>
+                  <li>You are familiar using Jira and Confluence in your workflow</li>
+                </ul> */}
+              </div>
+              {/* End jobdetails content */}
+
+              <div className="job-detail">
+                <h4>Location</h4>
+
+                <div className="form-group col-lg-12 col-md-12">
+                  <label htmlFor="countryid">{CHOOSE_YOUR_LOCATION}</label>
+                  <div className="map-outer">
+                    <div style={{ height: '450px', width: '100%' }}>
+                      <Map location={jobData?.location} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {jobData?.socials?.length < 0 && (
+                <div className="other-options">
+                  <div className="social-share">
+                    <h5>Social Media</h5>
+                    {jobData?.socials?.map((item: string, index: number) => (
+                      <a href={item} className={item} target="_blank" rel="noopener noreferrer" key={index}>
+                        <i className={`fab ${item}`}></i> {item}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="other-options">
+                <div className="social-share">
+                  <h5>Share this job</h5>
+                  {socialContent.map((item) => (
+                    <a href={item.link} className={item.iconClass} target="_blank" rel="noopener noreferrer" key={item.id}>
+                      <i className={`fab ${item.icon}`}></i> {item.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* <!-- Other Options --> */}
+
+              <div className="related-jobs">
+                <div className="title-box">
+                  <h3>Related Jobs</h3>
+                  <div className="text">2020 jobs live - 293 added today.</div>
+                </div>
+                {/* End title box */}
+
+                {jobs.slice(3, 7).map((item) => (
+                  <div className="job-block" key={item.id}>
                     <div className="inner-box">
                       <div className="content">
-                        <h4>{company?.jobTitle}</h4>
+                        <span className="company-logo">
+                          <img src={item.logo} alt="item brand" />
+                        </span>
+                        <h4>
+                          <Link to={`/job-single-v1/${item.id}`}>{item.jobTitle}</Link>
+                        </h4>
 
                         <ul className="job-info">
                           <li>
                             <span className="icon flaticon-briefcase"></span>
-                            {company?.company}
+                            {item.company}
                           </li>
                           {/* compnay info */}
                           <li>
                             <span className="icon flaticon-map-locator"></span>
-                            {company?.location}
+                            {item.location}
                           </li>
                           {/* location info */}
                           <li>
-                            <span className="icon flaticon-clock-3"></span> {company?.time}
+                            <span className="icon flaticon-clock-3"></span> {item.time}
                           </li>
                           {/* time info */}
                           <li>
-                            <span className="icon flaticon-money"></span> {company?.salary}
+                            <span className="icon flaticon-money"></span> {item.salary}
                           </li>
                           {/* salary info */}
                         </ul>
                         {/* End .job-info */}
 
                         <ul className="job-other-info">
-                          {company?.jobType?.map((val: any, i: number) => (
+                          {(item.jobType as any).map((val: any, i: number) => (
                             <li key={i} className={`${val.styleClass}`}>
                               {val.type}
                             </li>
                           ))}
                         </ul>
                         {/* End .job-other-info */}
-                      </div>
-                      {/* End .content */}
-                    </div>
-                  </div>
-                  {/* <!-- Job Block --> */}
-                </div>
-                {/* <!-- job block outer --> */}
 
-                <div className="job-overview-two">
-                  <h4>Job Description</h4>
-                  {/* <JobOverView2 /> */}
-                  <ul>
-                    <li>
-                      <i className="icon icon-calendar"></i>
-                      <h5>Date Posted:</h5>
-                      <span>Posted 1 hours ago</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-expiry"></i>
-                      <h5>Expiration date:</h5>
-                      <span>April 06, 2021</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-location"></i>
-                      <h5>Location:</h5>
-                      <span>London, UK</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-user-2"></i>
-                      <h5>Job Title:</h5>
-                      <span>Designer</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-clock"></i>
-                      <h5>Hours:</h5>
-                      <span>50h / week</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-rate"></i>
-                      <h5>Rate:</h5>
-                      <span>$15 - $25 / hour</span>
-                    </li>
-                    <li>
-                      <i className="icon icon-salary"></i>
-                      <h5>Salary:</h5>
-                      <span>$35k - $45k</span>
-                    </li>
-                  </ul>
-                </div>
-                {/* <!-- job-overview-two --> */}
-
-                {/* <JobDetailsDescriptions /> */}
-                <div className="job-detail">
-                  <h4>Job Description</h4>
-                  <p>
-                    As a Product Designer, you will work within a Product Delivery Team fused with UX, engineering, product and data talent. You will
-                    help the team design beautiful interfaces that solve business challenges for our clients. We work with a number of Tier 1 banks on
-                    building web-based applications for AML, KYC and Sanctions List management workflows. This role is ideal if you are looking to
-                    segue your career into the FinTech or Big Data arenas.
-                  </p>
-                  <h4>Key Responsibilities</h4>
-                  <ul className="list-style-three">
-                    <li>Be involved in every step of the product design cycle from discovery to developer handoff and user acceptance testing.</li>
-                    <li>Work with BAs, product managers and tech teams to lead the Product Design</li>
-                    <li>
-                      Maintain quality of the design process and ensure that when designs are translated into code they accurately reflect the design
-                      specifications.
-                    </li>
-                    <li>Accurately estimate design tickets during planning sessions.</li>
-                    <li>
-                      Contribute to sketching sessions involving non-designersCreate, iterate and maintain UI deliverables including sketch files,
-                      style guides, high fidelity prototypes, micro interaction specifications and pattern libraries.
-                    </li>
-                    <li>
-                      Ensure design choices are data led by identifying assumptions to test each sprint, and work with the analysts in your team to
-                      plan moderated usability test sessions.
-                    </li>
-                    <li>
-                      Design pixel perfect responsive UI’s and understand that adopting common interface patterns is better for UX than reinventing
-                      the wheel
-                    </li>
-                    <li>Present your work to the wider business at Show & Tell sessions.</li>
-                  </ul>
-                  <h4>Skill & Experience</h4>
-                  <ul className="list-style-three">
-                    <li>You have at least 3 years’ experience working as a Product Designer.</li>
-                    <li>You have experience using Sketch and InVision or Framer X</li>
-                    <li>You have some previous experience working in an agile environment – Think two-week sprints.</li>
-                    <li>You are familiar using Jira and Confluence in your workflow</li>
-                  </ul>
-                </div>
-                {/* End job-details */}
-
-                <div className="other-options">
-                  <div className="social-share">
-                    <h5>Share this job</h5>
-                    {/* <SocialTwo /> */}
-                    {socialContent.map((item) => (
-                      <a href={item.link} className={item.iconClass} target="_blank" rel="noopener noreferrer" key={item.id}>
-                        <i className={`fab ${item.icon}`}></i> {item.name}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-                {/* <!-- Other Options --> */}
-              </div>
-              {/* End .content-column */}
-
-              <JobDetailsSidebar company={company} />
-              {/* End .sidebar-column */}
-            </div>
-            {/* End .row  */}
-
-            <div className="related-jobs">
-              <div className="title-box">
-                <h3>Related Jobs</h3>
-                <div className="text">2020 jobs live - 293 added today.</div>
-              </div>
-              {/* End title box */}
-
-              <div className="row">
-                {/* <RelatedJobs2 /> */}
-
-                {jobs.slice(20, 24).map((item: any) => (
-                  <div className="job-block-four col-xl-3 col-lg-4 col-md-6 col-sm-12" key={item.id}>
-                    <div className="inner-box">
-                      <ul className="job-other-info">
-                        {item.jobType.map((val: any, i: number) => (
-                          <li key={i} className={`${val.styleClass}`}>
-                            {val.type}
-                          </li>
-                        ))}
-                      </ul>
-                      <span className="company-logo">
-                        <img src={item.logo} alt="featured job" />
-                      </span>
-                      <span className="company-name">{item.company}</span>
-                      <h4>
-                        <Link to={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
-                      </h4>
-                      <div className="location">
-                        <span className="icon flaticon-map-locator"></span>
-                        {item.location}
+                        <button className="bookmark-btn">
+                          <span className="flaticon-bookmark"></span>
+                        </button>
                       </div>
                     </div>
                   </div>
                   // End job-block
                 ))}
               </div>
-              {/* End .row */}
+              {/* <!-- Related Jobs --> */}
             </div>
-            {/* <!-- Related Jobs --> */}
+            {/* End .content-column */}
           </div>
-          {/* End auto-container */}
         </div>
-        {/* <!-- job-detail-outer--> */}
-      </section>
-      {/* <!-- End Job Detail Section --> */}
-    </>
+      </div>
+      {/* <!-- job-detail-outer--> */}
+    </section>
   );
 };
 

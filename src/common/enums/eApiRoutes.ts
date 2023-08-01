@@ -1,4 +1,6 @@
 export enum eApiRoutes {
-  SELF = '/users/self',
+  SELF = '/self',
   USERS = '/users',
+  JOBS = '/jobs',
+  EXPERIENCES = '/experiences',
 }

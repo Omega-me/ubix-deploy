@@ -1,34 +1,50 @@
-import candidatesData from 'common/data/candidates';
+import { UserDetailDataDto } from 'common/interfaces';
+import { Loading } from 'components';
 import { Link } from 'react-router-dom';
+import noCandidates from 'assets/images/no-jobs.png';
+import maleAvatar from 'assets/images/maleAvatar.png';
+import { eRoutes } from 'common/enums';
 
-const FilterCandidateBox = () => {
-  const content = candidatesData?.map((candidate: any) => (
-    <div className="candidate-block-four col-lg-4 col-md-6 col-sm-12" key={candidate.id}>
+interface FilterCandidateBoxProps {
+  candidatesProps: {
+    candidates: UserDetailDataDto[];
+    setPage: React.Dispatch<React.SetStateAction<number>>;
+    pages: number[];
+    page: number;
+    isLoading: boolean;
+  };
+}
+
+const FilterCandidateBox: React.FC<FilterCandidateBoxProps> = (props) => {
+  const { candidatesProps } = props;
+  const content = candidatesProps?.candidates?.map((candidate: UserDetailDataDto) => (
+    <div className="candidate-block-four col-lg-4 col-md-6 col-sm-12" key={candidate?.id}>
       <div className="inner-box">
-        <ul className="job-other-info">
+        {/* <ul className="job-other-info">
           <li className="green">Featured</li>
-        </ul>
+        </ul> */}
 
         <span className="thumb">
-          <img src={candidate.avatar} alt="candidates" />
+          {candidate?.profileImage ? <img src={candidate?.profileImage} alt="logo" /> : <img src={maleAvatar} alt="logo" />}
         </span>
         <h3 className="name">
-          <Link to={`/candidates-single-v3/${candidate.id}`}>{candidate.name}</Link>
+          <Link to={`/candidates-single-v3/${candidate?.id}`}>{candidate?.fullName}</Link>
         </h3>
-        <span className="cat">{candidate.designation}</span>
+        <span className="cat">{candidate?.role}</span>
 
         <ul className="job-info">
           <li>
-            <span className="icon flaticon-map-locator"></span> {candidate.location}
+            <span className="icon flaticon-map-locator"></span> {candidate?.address}
           </li>
           <li>
-            <span className="icon flaticon-money"></span> ${candidate.hourlyRate} / hour
+            <span className="icon flaticon-star"></span>{' '}
+            {candidate?.ratingsAverage !== null ? parseFloat(candidate?.ratingsAverage as any).toFixed(1) : 'No'} rating
           </li>
         </ul>
         {/* End candidate-info */}
 
         <ul className="post-tags">
-          {candidate.tags.map((val: any, i: number) => (
+          {candidate?.tags?.map((val: string, i: number) => (
             <li key={i}>
               <a href="#">{val}</a>
             </li>
@@ -36,7 +52,7 @@ const FilterCandidateBox = () => {
         </ul>
         {/* End tags */}
 
-        <Link to={`/candidates-single-v3/${candidate.id}`} className="theme-btn btn-style-three">
+        <Link to={`${eRoutes.CANDIDATESLISTING}/${candidate?.fullName}?id=${candidate?.id}`} className="theme-btn btn-style-three">
           View Profile
         </Link>
       </div>
@@ -46,114 +62,55 @@ const FilterCandidateBox = () => {
   // sort handler
   return (
     <>
-      <div className="ls-switcher">
-        <div className="showing-result">
-          {/* <div className="top-filters">
-                        <div className="form-group">
-                            <select className="chosen-single form-select">
-                                <option>Candidate Gender</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>other</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <select className="chosen-single form-select">
-                                <option>Date Posted</option>
-                                <option>New Jobs</option>
-                                <option>Freelance</option>
-                                <option>Full Time</option>
-                                <option>Internship</option>
-                                <option>Part Time</option>
-                                <option>Temporary</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <select className="chosen-single form-select">
-                                <option>Experience Level</option>
-                                <option>New Jobs</option>
-                                <option>Freelance</option>
-                                <option>Full Time</option>
-                                <option>Internship</option>
-                                <option>Part Time</option>
-                                <option>Temporary</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <select className="chosen-single form-select">
-                                <option>Education Level</option>
-                                <option>New Jobs</option>
-                                <option>Freelance</option>
-                                <option>Full Time</option>
-                                <option>Internship</option>
-                                <option>Part Time</option>
-                                <option>Temporary</option>
-                            </select>
-                        </div>
-                    </div> */}
-          {/* End top-left-filter */}
-        </div>
-        {/* End showing-result */}
-
-        <div className="sort-by">
-          <button className="btn btn-danger text-nowrap me-2" style={{ minHeight: '45px', marginBottom: '15px' }}>
-            Clear All
-          </button>
-
-          <select className="chosen-single form-select">
-            <option value="">Sort by (default)</option>
-            <option value="asc">Newest</option>
-            <option value="des">Oldest</option>
-          </select>
-          {/* End select */}
-
-          <select className="chosen-single form-select ms-3 ">
-            <option
-              value={JSON.stringify({
-                start: 0,
-                end: 0,
-              })}
-            >
-              All
-            </option>
-            <option
-              value={JSON.stringify({
-                start: 0,
-                end: 15,
-              })}
-            >
-              15 per page
-            </option>
-            <option
-              value={JSON.stringify({
-                start: 0,
-                end: 20,
-              })}
-            >
-              20 per page
-            </option>
-            <option
-              value={JSON.stringify({
-                start: 0,
-                end: 25,
-              })}
-            >
-              25 per page
-            </option>
-          </select>
-          {/* End select */}
-        </div>
+      <div className="row">
+        {' '}
+        {candidatesProps?.isLoading ? (
+          <Loading />
+        ) : candidatesProps?.candidates?.length > 0 ? (
+          content
+        ) : (
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+            <img src={noCandidates} alt="No jobs foound!" />
+            <div>Somethig went wrong, please try again.</div>
+          </div>
+        )}
       </div>
-      {/* End top filter bar box */}
 
-      <div className="row">{content}</div>
-      {/* End .row */}
+      {candidatesProps?.candidates?.length > 0 && (
+        <nav className="ls-pagination">
+          <ul>
+            {candidatesProps?.pages?.length >= 2 && candidatesProps?.page !== 1 && (
+              <>
+                <li className="prev" onClick={() => candidatesProps?.setPage(candidatesProps?.page - 1)}>
+                  <a>
+                    <i className="fa fa-arrow-left"></i>
+                  </a>
+                </li>
+                <li onClick={() => candidatesProps?.setPage(candidatesProps?.page - 1)}>
+                  <a>{candidatesProps?.page - 1}</a>
+                </li>
+              </>
+            )}
+            <li>
+              <a className="current-page">{candidatesProps?.page}</a>
+            </li>
+            {candidatesProps?.pages?.length <= 2 && candidatesProps?.page !== candidatesProps.pages?.length && (
+              <>
+                <li onClick={() => candidatesProps?.setPage(candidatesProps?.page + 1)}>
+                  <a>{candidatesProps?.page + 1}</a>
+                </li>
+                <li className="next" onClick={() => candidatesProps?.setPage(candidatesProps?.page + 1)}>
+                  <a>
+                    <i className="fa fa-arrow-right"></i>
+                  </a>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
+      )}
 
       {/* <Pagination /> */}
-      {/* <!-- Listing Show More --> */}
     </>
   );
 };

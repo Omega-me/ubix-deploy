@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { AuthData, IStateThunk, UserDataDto } from 'common/interfaces';
-import { signInWithPhoneNumberAction, signinAction, signinWithGoogleAction, signupAction } from '../actions/auth.action';
+import { signInWithPhoneNumberAction, signinAction, signinWithAppleAction, signinWithGoogleAction, signupAction } from '../actions/auth.action';
 import { ConfirmationResult } from 'firebase/auth';
 
 export class AuthReducer {
@@ -16,6 +16,9 @@ export class AuthReducer {
   resetAuthState() {
     if (this._state) {
       this._state.isLoading = false;
+      this._state.isGoogleLoading = false;
+      this._state.isAppleLoading = false;
+      this._state.isPhoneLoading = false;
       this._state.isError = false;
       this._state.isSuccess = false;
       this._state.message = '';
@@ -35,7 +38,7 @@ export class AuthReducer {
     }
   }
 
-  initializeUser(user: AuthData<UserDataDto>) {
+  initializeUser(user: AuthData<UserDataDto | { profile: boolean }>) {
     if (this._state) {
       this._state.data = user;
     }
@@ -50,6 +53,18 @@ export class AuthReducer {
   resetPhoneConfirmation() {
     if (this._state) {
       this._state.phoneConfirmation = null;
+    }
+  }
+
+  setIsPhoneLoading() {
+    if (this._state) {
+      this._state.isPhoneLoading = true;
+    }
+  }
+
+  resetIsPhoneLoading() {
+    if (this._state) {
+      this._state.isPhoneLoading = false;
     }
   }
 
@@ -71,30 +86,44 @@ export class AuthReducer {
         });
       this._builder
         .addCase(signinWithGoogleAction.pending, (state: IStateThunk<any>) => {
-          state.isLoading = true;
+          state.isGoogleLoading = true;
         })
         .addCase(signinWithGoogleAction.fulfilled, (state: IStateThunk<any>, { payload }) => {
-          state.isLoading = false;
+          state.isGoogleLoading = false;
           state.isSuccess = true;
           state.data = payload as any;
         })
         .addCase(signinWithGoogleAction.rejected, (state: IStateThunk<any>, { payload }) => {
           state.isError = true;
-          state.isLoading = false;
+          state.isGoogleLoading = false;
+          state.message = payload as string;
+        });
+      this._builder
+        .addCase(signinWithAppleAction.pending, (state: IStateThunk<any>) => {
+          state.isAppleLoading = true;
+        })
+        .addCase(signinWithAppleAction.fulfilled, (state: IStateThunk<any>, { payload }) => {
+          state.isAppleLoading = false;
+          state.isSuccess = true;
+          state.data = payload as any;
+        })
+        .addCase(signinWithAppleAction.rejected, (state: IStateThunk<any>, { payload }) => {
+          state.isError = true;
+          state.isAppleLoading = false;
           state.message = payload as string;
         });
       this._builder
         .addCase(signInWithPhoneNumberAction.pending, (state: IStateThunk<any>) => {
-          state.isLoading = true;
+          state.isPhoneLoading = true;
         })
         .addCase(signInWithPhoneNumberAction.fulfilled, (state: IStateThunk<any>, { payload }) => {
-          state.isLoading = false;
+          state.isPhoneLoading = false;
           state.isSuccess = true;
           state.data = payload as any;
         })
         .addCase(signInWithPhoneNumberAction.rejected, (state: IStateThunk<any>, { payload }) => {
           state.isError = true;
-          state.isLoading = false;
+          state.isPhoneLoading = false;
           state.message = payload as string;
         });
       this._builder
