@@ -63,14 +63,14 @@ const SidebarFooter: React.FC<SidebarFooterProps> = props => {
             329 Queensberry Street, North Melbourne VIC <br />
             3051, Australia.
           </span>
-          <a href="mailto:support@superio.com" className="email">
-            support@superio.com
+          <a href="mailto:support@ubix.com" className="email">
+            support@ubix.com
           </a>
         </div>
         {/* End .contact-info */}
 
         <div className="social-links">
-          {socialContent.map(item => (
+          {socialContent.map((item) => (
             <a href={item.link} target="_blank" rel="noopener noreferrer" key={item.id}>
               <i className={`fab ${item.icon}`}></i>
             </a>
