@@ -3,10 +3,11 @@ import { eSigninProvider, eTextType, eUserGender, eUserType } from 'common/enums
 import { AuthData, CreateUserDto, UserDataDto } from 'common/interfaces';
 import { AlertMessage, CostumText, Loading, ProfileLayoutContent, Map } from 'components';
 import { useState } from 'react';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import './profile.scss';
 import * as CONST from 'common/constants';
 import * as LABELS from 'common/labels';
+import TagInput from 'components/taginput/TagInput';
 
 interface ProfileProps {
   userData: AuthData<UserDataDto>;
@@ -20,6 +21,8 @@ interface ProfileProps {
     onHandleUpdateProfile: (e?: React.BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>;
     updateProfileErrors: FieldErrors<UserDataDto>;
     isUpdateUserLoading: boolean;
+    getUpdateProfileValues: UseFormGetValues<UserDataDto>;
+    setUpdateProfileValue: UseFormSetValue<UserDataDto>;
   };
 }
 
@@ -186,7 +189,7 @@ const Profile: React.FC<ProfileProps> = props => {
                           <label htmlFor="countryid">{LABELS.CHOOSE_YOUR_LOCATION}</label>
                           <div className="map-outer">
                             <div style={{ height: '450px', width: '100%' }}>
-                              <Map />
+                              <Map location={profile.getUpdateProfileValues('location')} />
                             </div>
                           </div>
                         </div>
@@ -199,30 +202,31 @@ const Profile: React.FC<ProfileProps> = props => {
               <div className="ls-widget">
                 <div className="tabs-box">
                   <div className="widget-title">
-                    <h4>{LABELS.SOCIAL_NETWORK}</h4>
+                    <h4>{LABELS.SOCIAL_NETWORK_AND_TAGS}</h4>
                   </div>
                   {/* TODO: social links */}
                   <div className="widget-content">
                     <div className="default-form">
                       <div className="row">
                         <div className="form-group col-lg-6 col-md-12">
-                          <label>Facebook</label>
-                          <input type="text" name="name" placeholder="www.facebook.com/Invision" />
+                          <label>{LABELS.SOCIAL}</label>
+                          <TagInput
+                            getUpdateProfileValues={profile.getUpdateProfileValues}
+                            setUpdateProfileValue={profile.setUpdateProfileValue}
+                            field={'socials'}
+                            name="socials"
+                            placeholder={LABELS.ENTER_A_SOCIAL_MEDIA_LINK}
+                          />
                         </div>
-
                         <div className="form-group col-lg-6 col-md-12">
-                          <label>Twitter</label>
-                          <input type="text" name="name" placeholder="" />
-                        </div>
-
-                        <div className="form-group col-lg-6 col-md-12">
-                          <label>Linkedin</label>
-                          <input type="text" name="name" placeholder="" />
-                        </div>
-
-                        <div className="form-group col-lg-6 col-md-12">
-                          <label>Instagram</label>
-                          <input type="text" name="name" placeholder="" />
+                          <label>{LABELS.TAGS}</label>
+                          <TagInput
+                            getUpdateProfileValues={profile.getUpdateProfileValues}
+                            setUpdateProfileValue={profile.setUpdateProfileValue}
+                            field="tags"
+                            name="tags"
+                            placeholder={LABELS.ENTER_A_TAG}
+                          />
                         </div>
                       </div>
                       {userData?.signinProvider !== eSigninProvider.PHONE && userData?.emailVerified !== undefined && !userData?.emailVerified ? (

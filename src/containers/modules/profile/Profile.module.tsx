@@ -1,4 +1,4 @@
-import { eApiRoutes, eHttpMethod, eRoutes } from 'common/enums';
+import { eApiRoutes, eHttpMethod } from 'common/enums';
 import { AuthData, CreateUserDto, UserDataDto } from 'common/interfaces';
 import { getErrorMessage } from 'common/utils';
 import { Profile } from 'components';
@@ -15,9 +15,7 @@ const ProfileModule = () => {
   const {
     register: registerCreateProfile,
     handleSubmit: handleCreateProfile,
-    reset: resetCreateProfileFields,
     formState: { errors: createProfileErrors },
-    clearErrors: clearCreateProfileErrors,
   } = useForm<CreateUserDto>({
     defaultValues: {
       email: userData?.email,
@@ -28,9 +26,9 @@ const ProfileModule = () => {
   const {
     register: registerUpdateProfile,
     handleSubmit: handleUpdateProfile,
-    reset: resetUpdateProfileFields,
     formState: { errors: updateProfileErrors },
-    clearErrors: clearUpdateProfileErrors,
+    getValues: getUpdateProfileValues,
+    setValue: setUpdateProfileValue,
   } = useForm<UserDataDto>({
     defaultValues: { ...userData?.user },
   });
@@ -46,9 +44,7 @@ const ProfileModule = () => {
     queryConfig: {
       queryOptions: {
         onSuccessFn: () => {
-          resetCreateProfileFields();
-          clearCreateProfileErrors();
-          navigate(eRoutes.PROFILE);
+          navigate(0);
         },
         onError(error) {
           toast.error(getErrorMessage(error));
@@ -65,9 +61,7 @@ const ProfileModule = () => {
       queryUrl: eApiRoutes.SELF.split('/')[1],
       queryOptions: {
         onSuccessFn: () => {
-          resetUpdateProfileFields();
-          clearUpdateProfileErrors();
-          navigate(eRoutes.PROFILE);
+          navigate(0);
         },
         onError(error) {
           toast.error(getErrorMessage(error));
@@ -88,7 +82,6 @@ const ProfileModule = () => {
         delete data[key];
       }
     });
-
     updateUser(data);
   });
 
@@ -105,6 +98,8 @@ const ProfileModule = () => {
         onHandleUpdateProfile,
         updateProfileErrors,
         isUpdateUserLoading,
+        getUpdateProfileValues,
+        setUpdateProfileValue,
       }}
     />
   );

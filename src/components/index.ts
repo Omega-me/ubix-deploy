@@ -19,7 +19,7 @@ export { default as JobDetails } from './jobdetails/JobDetails';
 export { default as Social } from './social/Social';
 export { default as CandidatesListing } from './candidateslisting/CandidatesListing';
 export { default as CandidateViewProfile } from './candidateviewprofile/CandidateViewProfile';
-export { default as CostumText } from './CostumText/CostumText';
+export { default as CostumText } from './customtext2/CustomText';
 export { default as Loading } from './loading/Loading';
 export { default as AlertMessage } from './alertmessage/AlertMessage';
 export { default as Auth } from './auth/Auth';

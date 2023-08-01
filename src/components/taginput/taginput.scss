@@ -1,0 +1,20 @@
+.rti--container {
+  --rti-main: rgba(0, 0, 0, 0) !important;
+  border: none !important;
+}
+.tag {
+  background: var(--primary-3rd-color) !important;
+  color: var(--primary-color) !important;
+  button {
+    color: var(--primary-color) !important;
+  }
+}
+
+.input-message {
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.input-message-color {
+  color: var(--primary-color);
+}

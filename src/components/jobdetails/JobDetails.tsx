@@ -216,12 +216,11 @@ const JobDetails: React.FC<JobDetailsProps> = (props) => {
 
               {/* <!-- Other Options --> */}
 
-              <div className="related-jobs">
+              {/* <div className="related-jobs">
                 <div className="title-box">
                   <h3>Related Jobs</h3>
                   <div className="text">2020 jobs live - 293 added today.</div>
                 </div>
-                {/* End title box */}
 
                 {jobs.slice(3, 7).map((item) => (
                   <div className="job-block" key={item.id}>
@@ -239,22 +238,17 @@ const JobDetails: React.FC<JobDetailsProps> = (props) => {
                             <span className="icon flaticon-briefcase"></span>
                             {item.company}
                           </li>
-                          {/* compnay info */}
                           <li>
                             <span className="icon flaticon-map-locator"></span>
                             {item.location}
                           </li>
-                          {/* location info */}
                           <li>
                             <span className="icon flaticon-clock-3"></span> {item.time}
                           </li>
-                          {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span> {item.salary}
                           </li>
-                          {/* salary info */}
                         </ul>
-                        {/* End .job-info */}
 
                         <ul className="job-other-info">
                           {(item.jobType as any).map((val: any, i: number) => (
@@ -263,7 +257,6 @@ const JobDetails: React.FC<JobDetailsProps> = (props) => {
                             </li>
                           ))}
                         </ul>
-                        {/* End .job-other-info */}
 
                         <button className="bookmark-btn">
                           <span className="flaticon-bookmark"></span>
@@ -273,7 +266,7 @@ const JobDetails: React.FC<JobDetailsProps> = (props) => {
                   </div>
                   // End job-block
                 ))}
-              </div>
+              </div> */}
               {/* <!-- Related Jobs --> */}
             </div>
             {/* End .content-column */}

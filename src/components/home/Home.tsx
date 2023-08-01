@@ -15,7 +15,7 @@ const Home: React.FC<HomeProps> = () => {
       {/* <ClientsSection /> */}
       {/* <!-- End Clients Section--> */}
 
-      <JobCategoriesSection />
+      {/* <JobCategoriesSection /> */}
 
       {/* <!-- End Job Categories --> */}
 
@@ -29,7 +29,7 @@ const Home: React.FC<HomeProps> = () => {
       {/* <TopCompaniesSection /> */}
       {/* <!-- End Top Companies --> */}
 
-      <AboutSection />
+      {/* <AboutSection /> */}
       {/* <!-- End About Section --> */}
       <PricingSection />
       {/* <!-- End Pricing Section --> */}

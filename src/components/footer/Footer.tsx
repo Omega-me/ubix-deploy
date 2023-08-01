@@ -28,8 +28,8 @@ const Footer: React.FC<FooterProps> = (props) => {
                 <p className="address">
                   329 Queensberry Street, North Melbourne VIC
                   <br /> 3051, Australia. <br />
-                  <a href="mailto:support@superio.com" className="email">
-                    support@superio.com
+                  <a href="mailto:support@ubix.com" className="email">
+                    support@ubix.com
                   </a>
                 </p>
               </div>
@@ -68,10 +68,10 @@ const Footer: React.FC<FooterProps> = (props) => {
         <div className="auto-container">
           <div className="outer-box">
             <div className="copyright-text">
-              © {new Date().getFullYear()} Superio by{' '}
-              <a href="https://themeforest.net/user/ib-themes" target="_blank" rel="noopener noreferrer">
+              © {new Date().getFullYear()} Ubix{' '}
+              {/* <a href="https://themeforest.net/user/ib-themes" target="_blank" rel="noopener noreferrer">
                 ib-themes
-              </a>
+              </a> */}
               . All Right Reserved.
             </div>
             <div className="social-links">
